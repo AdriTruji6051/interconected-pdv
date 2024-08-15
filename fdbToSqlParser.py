@@ -1,19 +1,12 @@
+#Este metodo de acceso por abrir coneccion, query, cambios, commit y cerrar lo hace bastante mas lento, 
+#pero al ser un proceso de un solo uso me facilita el mudar la base de datos de FDB a sqlite mediante un 
+#codigo mas limpio 
+
 import fdb
 import ctypes
 import sqlite3
 
-res = {}
-print('CHAMBEANDO ANDAMOS')
-try:
-    
-    #CONECCION A SQL ELEIMINAMOS LA TABLA ANTERIOR PARA GUARDAR LOS DATOS ACTUALIZADOS...
-    conSQL = sqlite3.connect("./pchdata.sqlite3")
-    cursorSQL = conSQL.cursor()
-    cursorSQL.execute("DROP TABLE IF EXISTS productos;")
-    cursorSQL.execute("CREATE TABLE IF NOT EXISTS productos( codigo VARCHAR(50) PRIMARY KEY, descripcion VARCHAR(50), precioCosto REAL,precioVenta REAL, precioMayoreo REAL)")
-    sqlQuery = '''INSERT INTO productos (codigo, descripcion, precioCosto, precioVenta, precioMayoreo) VALUES (?, ?, ?, ?, ?)'''
-
-    #CONECCION A FDB PARA OBTENER LOS DATOS E INSERTARLOS 
+def fdbQuery(query)-> list:
     ctypes.cdll.LoadLibrary('./fbclient.dll')
     con =  fdb.connect(
         dsn='PDVDATA.fdb', 
@@ -23,23 +16,73 @@ try:
     )
 
     cur = con.cursor()
-    cur.execute('SELECT CODIGO, DESCRIPCION, PCOSTO, PVENTA, MAYOREO  FROM PRODUCTOS;')
+    cur.execute(query)
 
-    #Obtenidos los datos de FDB los parseamos a SQLIte
-    for row in cur.fetchall():
-        codigo = row[0]
-        descripcion = row[1]
-        pCosto = float(row[2])
-        pVenta = float(row[3])
-        mayoreo = float(row[4])
-        print(codigo, descripcion, pCosto, pVenta, mayoreo)
-        cursorSQL.execute(sqlQuery, (codigo, descripcion, pCosto, pVenta, mayoreo))
-        
+    queryResult = cur.fetchall()
+
     cur.close()
     con.close()
+
+    return queryResult
+
+def sqlite3Query(query) -> list:
+    conSQL = sqlite3.connect("./pchdata.sqlite3")
+    cursorSQL = conSQL.cursor()
+    queryResult = cursorSQL.execute(query)
     conSQL.commit()
     conSQL.close()
 
+    return queryResult
+
+def sqlite3QueryParams(query, params) -> list:
+    conSQL = sqlite3.connect("./pchdata.sqlite3")
+    cursorSQL = conSQL.cursor()
+    queryResult = cursorSQL.execute(query, params)
+    conSQL.commit()
+    conSQL.close()
+
+    return queryResult
+
+def productosParser() -> None:
+    print('Exportando productos...')
+    sqlite3Query('DROP TABLE IF EXISTS PRODUCTOS;')
+    sqlite3Query('CREATE TABLE IF NOT EXISTS PRODUCTOS (CODIGO VARCHAR(50) PRIMARY KEY, DESCRIPCION TEXT NOT NULL,TVENTA TEXT NOT NULL,PCOSTO REAL,PVENTA REAL NOT NULL,DEPT INTEGER,MAYOREO REAL,IPRIORIDAD INTEGER,DINVENTARIO REAL,DINVMINIMO REAL,DINVMAXIMO REAL,CHECADO_EN TEXT,PORCENTAJE_GANANCIA INTEGER);')
+
+    sqlQuery = '''INSERT INTO PRODUCTOS (CODIGO,DESCRIPCION,TVENTA,PCOSTO, PVENTA,DEPT,MAYOREO,IPRIORIDAD,DINVENTARIO,DINVMINIMO,DINVMAXIMO,CHECADO_EN,PORCENTAJE_GANANCIA) VALUES (?, ?, ?, ?, ?,?, ?, ?, ?, ?,?, ?, ?);'''
+    cur = fdbQuery('SELECT CODIGO, DESCRIPCION, TVENTA, PCOSTO, PVENTA, DEPT, MAYOREO, IPRIORIDAD, DINVENTARIO, DINVMINIMO, DINVMAXIMO, CHECADO_EN, PORCENTAJE_GANANCIA FROM PRODUCTOS;')
+
+    for row in cur:
+        sqlite3QueryParams(sqlQuery, row)
+
+def ventaTicketsParser() -> None:
+    print('Exportando tickets...')
+    sqlite3Query('DROP TABLE IF EXISTS VENTATICKETS;')
+    sqlite3Query('CREATE TABLE IF NOT EXISTS VENTATICKETS (ID INTEGER PRIMARY KEY, FOLIO INTEGER NOT NULL,CAJA_ID INTEGER NOT NULL,CAJERO_ID INTEGER NOT NULL, NOMBRE TEXT NOT NULL,CREADO_EN TEXT NOT NULL,  SUBTOTAL REAL,IMPUESTOS REAL,TOTAL REAL NOT NULL,GANANCIA REAL,ESTA_ABIERTO INTEGER, CLIENTE_ID INTEGER,VENDIDO_EN TEXT,  ES_MODIFICABLE TEXT,   PAGO_CON REAL,MONEDA TEXT, NUMERO_ARTICULOS INTEGER,PAGADO_EN TEXT, ESTA_CANCELADO TEXT, OPERACION_ID INTEGER,OLD_TICKET_ID INTEGER,NOTAS BLOB,IMPRIMIR_NOTA TEXT,FORMA_PAGO TEXT,REFERENCIA TEXT,FACTURA_ID INTEGER,TOTAL_DEVUELTO REAL);')
+
+    sqlQuery = '''INSERT INTO VENTATICKETS (ID,FOLIO,CAJA_ID,CAJERO_ID,NOMBRE,CREADO_EN,SUBTOTAL,IMPUESTOS,TOTAL,GANANCIA,ESTA_ABIERTO,CLIENTE_ID,VENDIDO_EN,ES_MODIFICABLE,PAGO_CON,MONEDA,NUMERO_ARTICULOS,PAGADO_EN,ESTA_CANCELADO,OPERACION_ID,OLD_TICKET_ID,NOTAS,IMPRIMIR_NOTA,FORMA_PAGO,REFERENCIA,FACTURA_ID,TOTAL_DEVUELTO) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?, ?);'''
+
+    cur = fdbQuery('SELECT ID, FOLIO, CAJA_ID, CAJERO_ID, NOMBRE, CREADO_EN, SUBTOTAL, IMPUESTOS, TOTAL, GANANCIA, ESTA_ABIERTO, CLIENTE_ID, VENDIDO_EN, ES_MODIFICABLE, PAGO_CON, MONEDA, NUMERO_ARTICULOS, PAGADO_EN, ESTA_CANCELADO, OPERACION_ID, OLD_TICKET_ID, NOTAS, IMPRIMIR_NOTA, FORMA_PAGO, REFERENCIA, FACTURA_ID, TOTAL_DEVUELTO FROM VENTATICKETS;')
+
+    for row in cur:
+        sqlite3QueryParams(sqlQuery, row)
+
+def ventaTicketsArticulosParser():
+    print('Exportando productos vendidos...')
+    sqlite3Query('DROP TABLE IF EXISTS VENTATICKETS_ARTICULOS;')
+    sqlite3Query('CREATE TABLE VENTATICKETS_ARTICULOS (ID INTEGER PRIMARY KEY, TICKET_ID INTEGER NOT NULL, PRODUCTO_CODIGO VARCHAR(50) NOT NULL, PRODUCTO_NOMBRE TEXT NOT NULL, CANTIDAD REAL NOT NULL, GANANCIA REAL, DEPARTAMENTO_ID INTEGER, PAGADO_EN TEXT NOT NULL, USA_MAYOREO TEXT, PORCENTAJE_DESCUENTO REAL, COMPONENTES TEXT, IMPUESTOS_USADOS TEXT, IMPUESTO_UNITARIO REAL, PRECIO_USADO REAL, CANTIDAD_DEVUELTA REAL, FUE_DEVUELTO TEXT, PORCENTAJE_PAGADO REAL);')
+
+    sqlQuery = 'INSERT INTO VENTATICKETS_ARTICULOS (ID, TICKET_ID, PRODUCTO_CODIGO, PRODUCTO_NOMBRE, CANTIDAD, GANANCIA, DEPARTAMENTO_ID, PAGADO_EN, USA_MAYOREO, PORCENTAJE_DESCUENTO, COMPONENTES, IMPUESTOS_USADOS, IMPUESTO_UNITARIO, PRECIO_USADO, CANTIDAD_DEVUELTA, FUE_DEVUELTO, PORCENTAJE_PAGADO) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+
+    cur = fdbQuery('SELECT ID, TICKET_ID, PRODUCTO_CODIGO, PRODUCTO_NOMBRE, CANTIDAD, GANANCIA, DEPARTAMENTO_ID, PAGADO_EN, USA_MAYOREO, PORCENTAJE_DESCUENTO, COMPONENTES, IMPUESTOS_USADOS, IMPUESTO_UNITARIO, PRECIO_USADO, CANTIDAD_DEVUELTA, FUE_DEVUELTO, PORCENTAJE_PAGADO FROM VENTATICKETS_ARTICULOS;')
+
+    for row in cur:
+        sqlite3QueryParams(sqlQuery, row)
+        
+try:
+    print('CHAMBEANDO ANDAMOS V3')
+    ventaTicketsArticulosParser()
+    productosParser()    
+    ventaTicketsParser()
 except Exception as e:
     print(e)
 finally:
