@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Punto de venta</title>
+    <title>Productos</title>
     <link rel="stylesheet" href="css/bootstrap.min.css">
 </head>
 <body>
     
-    <h1>Dar de Alta un Producto</h1>
-    <form id="productForm">
+    <h1>Agregar o actualizar un producto</h1>
+    <form id="insertProductForm">
         <label for="codigo">Código:</label>
         <input type="text" id="codigo" name="codigo" required><br><br>
 
@@ -25,8 +25,8 @@
         <label for="mayoreo">Precio Mayoreo:</label>
         <input type="number" id="mayoreo" name="mayoreo" step="0.01" ><br><br>
 
-        <label for="porcentaje_ganancia">Porcentaje de Ganancia:</label>
-        <input type="number" id="porcentaje_ganancia" name="porcentaje_ganancia" ><br><br>
+        <label for="porcentaje_ganancia">Porcentaje de Ganancia (%):</label>
+        <input type="number" id="porcentaje_ganancia" name="porcentaje_ganancia" value="20"><br><br>
 
         <label for="dept">Departamento:</label>
         <input type="number" id="dept" name="dept" ><br><br>
@@ -38,18 +38,29 @@
         <label for="usaInventario">¿Usa inventario?:</label>
         <input type="checkbox" id="usaInventario" name="usaInventario"><br><br>
 
-        <label for="dinventario">Actualmente en inventario:</label>
-        <input type="number" id="dinventario" name="dinventario"><br><br>
-
-        <label for="dinvminimo">Minimo en inventario (avisar cuando haya menos de):</label>
-        <input type="number" id="dinvminimo" name="dinvminimo"><br><br>
-
+        <section id="inventario" hidden>
+            <label for="dinventario">Actualmente en inventario:</label>
+            <input type="number" id="dinventario" name="dinventario" disabled><br><br>
+    
+            <label for="dinvminimo">Minimo en inventario (avisar cuando haya menos de):</label>
+            <input type="number" id="dinvminimo" name="dinvminimo" disabled><br><br>
+        </section>
 
         <input type="submit" value="Agregar Producto">
     </form>
 
+    <br><br>
+    <h1>Eliminar producto</h1>
+    <form id="deleteProductForm">
+        <label for="codigo">Código:</label>
+        <input type="text" id="codigo" name="codigo" required><br><br>
+
+        <p id="vistaPrevia">Vista previa: </p>
+
+        <input type="submit" value="Eliminar Producto">
+    </form>
+
     <script src="js/API/main.js"></script>
-    <script src="js/API/ticketRequest.js"></script>
     <script src="js/API/productCRUD.js"></script>
     <script src="js/bootstrap.bundle.min.js"></script>
 </body>

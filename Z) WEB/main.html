@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Punto de Venta</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <!-- Inicio navbar -->
+    <nav class="navbar bg-body-tertiary navbar-expand-lg fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand legend" href="#">
+            <img src="./img/LOGO_DULCERÍA_COLOR.png" alt="Logo de la Dulceria MyA" class="img-fluid"/>
+            Dulceria MyA
+            </a>
+    
+            <!-- Abrir menu despegable DISPOSITIVOS PEQUEÑOS -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar"
+            aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+            </button>
+    
+            <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
+            <!-- Cerarr menu despegable -->
+            <div class="offcanvas-header">
+                <h5 class="offcanvas-title" id="offcanvasNavbarLabel">Dental Gutierrez</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+    
+            <div class="offcanvas-body">
+                <ul class="navbar-nav justify-content-end flex-grow-1 pe-3 nav-bar-options">
+                <!-- <li class="nav-item">
+                    <a class="nav-link fs-5 me-3" aria-current="page" href="#ubicacion">Ubicación</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link fs-5 me-3" aria-current="page" href="#resenas">Reseñas</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link fs-5 me-3" aria-current="page" href="#">Tratamientos</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link fs-5 me-3" aria-current="page" href="#">Cuidado dental</a>
+                </li> -->
+                </ul>
+                <button class="btn btn-primary margin-right btn-primary-color">Hola <i
+                    class="fa-solid fa-phone"></i></button>
+            </div>
+            </div>
+        </div>
+    </nav>
+    <!-- Final navbar -->
+
+    <!-- Contenedor principal del punto de venta -->
+    <main id="main-container">
+        <div class="container-fluid">
+            <div class="row">
+                <div id="ticket" class="col-xl-8 col-lg-8 col-sm-9 col-12 d-flex flex-column container-fluid">
+                    <div id="product-search">
+                        <input type="text" id="input-search-product" placeholder="Escriba el código o nombre del producto" style="width: 70%;">
+                        <button id="btn-search-product">Buscar</button>
+                    </div>
+                    <div id="bill">
+                        <table class="table table-striped table-hover">
+                            <thead id="bill-table-head">
+                                <th>código de barras</th>
+                                <th>Descripción</th>
+                                <th>Precio</th>
+                                <th>Cantidad</th>
+                                <th>Importe</th>
+                            </thead>
+                            <tbody id="bill-table-body">
+                                <!-- Aqui se insertan los elementos nuevos de la cuenta -->
+
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="info-bar">
+                        <h1 id="total">Total: 0.00</h1>
+                    </div>
+                </div>
+                <div id="tools" class="col-xl-4 col-lg-4 col-sm-4 col-4">
+
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="js/API/main.js"></script>
+    <script src="js/API/consultas.js"></script>
+    <script src="js/API/punto-de-venta.js"></script>
+    <script src="js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
