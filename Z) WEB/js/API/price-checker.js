@@ -1,10 +1,6 @@
 const searchProductBtn = document.getElementById('searchProduct');
 const inputProduct = document.getElementById('inputProduct')
 
-window.onload = function(){
-    inputProduct.focus()
-}
-
 const getProducts = async() => {
     const id = inputProduct.value;
     const url = `http://${SERVERIP}:5000/get/product?value=${encodeURIComponent(id)}`;
@@ -23,6 +19,12 @@ const getProducts = async() => {
         }
     })
     .catch(error => console.error('Error:', error));
+}
+
+
+//Eventos linkeados a nuestro documento
+window.onload = function(){
+    inputProduct.focus()
 }
 
 document.addEventListener('keydown',function(event){

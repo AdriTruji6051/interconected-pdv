@@ -2,11 +2,12 @@
     --main-button-color: red;
     --main-button-hover-color: blue;
     --main-button-hover-color: yellow;
-    --ticket-bck-color: pink;
+    --ticket-bck-color: white;
     --tools-bck-color: cyan;
     --bill-bck-color: red;
-    --info-bar-back-color: blue;
+    --info-bar-back-color: white;
     --product-search-bck-color: yellow;
+    --ticket-print-prev-bck-color: white;
 }
 
 .legend img {
@@ -36,6 +37,11 @@
     padding: 0;
 }
 
+#ticket-print-prev{
+    background-color: var(--ticket-print-prev-bck-color);
+    height: calc(100vh - 90px);
+}
+
 #product-search{
     border: 2px solid black;
     height: 10%;
@@ -44,6 +50,7 @@
 #bill{
     border: 2px solid black;
     height: 73%;
+    overflow-y: auto;
 }
 
 #info-bar{

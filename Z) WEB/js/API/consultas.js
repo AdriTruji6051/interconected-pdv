@@ -15,3 +15,29 @@ async function getProduct(codigo){
 
     return res
 }
+
+async function submitTicket(bill, total) {
+
+    const url = `http://${SERVERIP}:5000/print/new/ticket`
+
+    const ticket = {
+        print: 1,
+        products: bill,
+        total: total,
+    }
+
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: ticket
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert('Submited!..')
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+    });
+}

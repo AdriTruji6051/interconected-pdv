@@ -2,13 +2,15 @@ const btnSearchProduct = document.getElementById('btn-search-product');
 const inputSearchProduct = document.getElementById('input-search-product')
 const billTable = document.getElementById('bill-table-body');
 const totalH1 = document.getElementById('total');
+const submitBill = document.getElementById('submit-bill');
 
 var productsOnBill = {}
-var selectedProductRowId
+var selectedProductRow
+var selectedProductRow__BDid 
 
 function calculateTotalBill(){
     var totalBill = 0;
-    for(let clave in productsOnBill){
+    for(var clave in productsOnBill){
         totalBill += productsOnBill[clave].IMPORTE;
     }
 
@@ -16,13 +18,17 @@ function calculateTotalBill(){
 }
 
 const appendToBillTable = (product) => {
+    //Si existe el elemento en la cuenta, actualizamos dicho elemento
     if(productsOnBill.hasOwnProperty(product['CODIGO'])) {
-        let prOnBill = productsOnBill[product['CODIGO']];
+        var prOnBill = productsOnBill[product['CODIGO']];
         prOnBill.CANTIDAD += 1;
         prOnBill.IMPORTE = prOnBill.CANTIDAD * prOnBill.PVENTA;
 
         document.getElementById(`can-${product['CODIGO']}`).innerText = prOnBill.CANTIDAD;
         document.getElementById(`imp-${product['CODIGO']}`).innerText = prOnBill.IMPORTE;
+        document.getElementById(`tr-${product['CODIGO']}`).scrollIntoView({ behavior: 'smooth' });
+
+    //Si no extiste, lo añadimos a la cuenta y creamos una fila del prodcuto
     } else {
         productsOnBill[product['CODIGO']] = {
             DESCRIPCION: product['DESCRIPCION'],
@@ -32,8 +38,9 @@ const appendToBillTable = (product) => {
         }
 
         // Crear una nueva fila
-        let row = document.createElement('tr');
+        var row = document.createElement('tr');
         row.id = `tr-${product['CODIGO']}`;
+        row.name = product['CODIGO'];
 
         // Crear y añadir celdas a la fila
         row.innerHTML = `
@@ -46,26 +53,17 @@ const appendToBillTable = (product) => {
 
         // Añadir la fila a la tabla
         billTable.appendChild(row);
+        row.scrollIntoView({ behavior: 'smooth' });
 
-        // Añadir el evento
-        row.addEventListener('click', function() {
-            if(selectedProductRowId){
-                document.getElementById(`tr-${selectedProductRowId}`).classList.remove('table-primary');
-            }
-            selectedProductRowId = product['CODIGO'];
-            document.getElementById(`tr-${selectedProductRowId}`).classList.add('table-primary');
-        });
     }
 }
 
-
-
 const addProductToBill = async() => {
     var res = await getProduct(inputSearchProduct.value);
+    inputSearchProduct.value = '';
     if(typeof(res) === 'string'){
-        let product = JSON.parse(res);
+        var product = JSON.parse(res);
         appendToBillTable(product);
-        inputSearchProduct.value = '';
         totalH1.innerText = `Total: ${calculateTotalBill()}`;
     }else{
         // Cuando tenga de detectar varios productos y agregarlos a una tabla secundaria
@@ -75,12 +73,12 @@ const addProductToBill = async() => {
 
 const deleteProductFromBill = () => {
     alert('Borrar producto!...')
-    console.log(selectedProductRowId);
-    if(selectedProductRowId){
-        let row = document.getElementById(`tr-${selectedProductRowId}`);
+    console.log(selectedProductRow);
+    if(selectedProductRow){
+        var row = document.getElementById(selectedProductRow);
         if(row){
-            row.hidden = true;
-            delete productsOnBill[selectedProductRowId];
+            row.parentNode.removeChild(row);
+            delete productsOnBill[selectedProductRow__BDid];
             totalH1.innerText = `Total: ${calculateTotalBill()}`;
         }else{
             console.log('El elemento no existe.')
@@ -88,16 +86,55 @@ const deleteProductFromBill = () => {
     }
 }
 
+const collectTheBill = async (event) => {
+    event.preventDefault();
+
+    if(Object.keys(productsOnBill).length !== 0){
+        submitTicket(productsOnBill, calculateTotalBill());
+    }else{
+        alert('Cuenta vacia!...')
+    }
+}
+
 function manageKeyPressed(event){
     console.log('Hey:', event.key);
 
-    let key = event.key;
+    var key = event.key;
     if(key === 'Delete'){
         deleteProductFromBill();
+    }else if(key === 'F12'){
+        collectTheBill(event);
     }
 }
 
 
-document.addEventListener('keydown', manageKeyPressed)
+//Eventos asociados a nuestro documento
+window.onload = function(){
+    inputSearchProduct.focus()
+}
 
-btnSearchProduct.addEventListener('click', addProductToBill)
+billTable.addEventListener('click', function(event){
+    const productRow = event.target.parentNode;
+    selectedProductRow__BDid = productRow.name;
+    selectedProductRow = productRow.id;
+    document.getElementById(selectedProductRow).classList.add('table-primary')
+
+});
+
+inputSearchProduct.addEventListener('keypress', function(event) {
+    if(event.key === 'Enter'){
+        getProduct();
+    }
+});
+
+document.addEventListener('keydown', manageKeyPressed);
+
+btnSearchProduct.addEventListener('click', addProductToBill);
+
+inputSearchProduct.addEventListener('keypress', function(event){
+    if(event.key === 'Enter'){
+        addProductToBill()
+    }
+});
+
+submitBill.addEventListener('click', collectTheBill);

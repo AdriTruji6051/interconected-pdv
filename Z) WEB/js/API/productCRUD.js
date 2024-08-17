@@ -169,6 +169,8 @@ deleteForm.addEventListener('submit', function(event) {
 
 });
 
+
+
 inputUsaInventario.addEventListener('change', invStatus)
 
 inputCodigo.addEventListener('blur', isProductOn);

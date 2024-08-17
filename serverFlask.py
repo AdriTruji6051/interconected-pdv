@@ -222,6 +222,33 @@ def deleteProduct():
         print(e)
         return jsonify({'status': 409})
 
+@app.route('/print/new/ticket', methods=['POST'])
+def createTicket():
+
+    data = request.get_json()
+    if data is None:
+        print('No data')
+        return jsonify({'error': 'No se recibió ningún JSON'}), 400
+    
+    willPrint = bool(data.get('print'))
+    products = data.get('products')
+    total = data.get('total')
+
+    print(willPrint, type(willPrint))
+    print(products, type(products))
+    print(total, type(total))
+
+
+
+
+
+    return jsonify({'hola': 'Adios'})
+
+@app.route('/print/ticket', methods=['GET'])
+def rePrintTicket():
+    return
+
+#Fin de rutas de la API
 def openHTML():
     run(['index.html'], shell=False, creationflags=CREATE_NEW_CONSOLE)
 
