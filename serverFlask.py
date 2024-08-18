@@ -4,11 +4,22 @@ from flask_cors import CORS
 import threading
 import sqlite3
 import json
+from printer_mediator import list_printers, print_ticket, create_ticket_struct
 
 app = Flask(__name__)
 CORS(app, supports_credentials=True)
 
+#   Herramientas para las rutas del servidor
+def calculate_total_bill(products):
+    total_local = 0
+    for key in products:
+        IMPORTE = products[key]['IMPORTE']
+        total_local += IMPORTE
+    return total_local
 
+
+
+#   GET SENTENCES
 @app.route('/get/product', methods=['GET'])
 def getProduct():
     res = None
@@ -126,6 +137,8 @@ def getProductById():
         
     return jsonify({'product': res})
 
+
+#   PRODUCT CRUD LOGIC
 @app.route('/insert/product', methods=['POST'])
 def insertProduct():
     try:
@@ -222,27 +235,35 @@ def deleteProduct():
         print(e)
         return jsonify({'status': 409})
 
+
+#   TICKET PRINTER LOGIC
+@app.route('/get/printers', methods=['GET'])
+def getPrinters():
+    return jsonify({'printers': list_printers()})
+
 @app.route('/print/new/ticket', methods=['POST'])
 def createTicket():
+    print('Holis')
+    try:
+        data = request.get_json()
+        if data is None:
+            print('No data')
+            return jsonify({'error': 'No se recibió ningún JSON'}), 400
+        
+        willPrint = bool(data.get('print'))
+        products = data.get('products')
+        printerName = data.get('printerName')
+        total = calculate_total_bill(products)
 
-    data = request.get_json()
-    if data is None:
-        print('No data')
-        return jsonify({'error': 'No se recibió ningún JSON'}), 400
-    
-    willPrint = bool(data.get('print'))
-    products = data.get('products')
-    total = data.get('total')
+        if willPrint : print_ticket(create_ticket_struct(products),printerName)
 
-    print(willPrint, type(willPrint))
-    print(products, type(products))
-    print(total, type(total))
+        #AQUI DEBEMOS CREAR LA ESTRUCTURA DEL TICKET Y GUARDARLO EN LA BD
 
+        return jsonify({'impresion': 'EXITOSA'})
+    except Exception as e:
+        print(e)
+        return jsonify({'impresion': 'DENEGADA'})
 
-
-
-
-    return jsonify({'hola': 'Adios'})
 
 @app.route('/print/ticket', methods=['GET'])
 def rePrintTicket():

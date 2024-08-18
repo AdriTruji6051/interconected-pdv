@@ -31,22 +31,25 @@
     
             <div class="offcanvas-body">
                 <ul class="navbar-nav justify-content-end flex-grow-1 pe-3 nav-bar-options">
-                <!-- <li class="nav-item">
-                    <a class="nav-link fs-5 me-3" aria-current="page" href="#ubicacion">Ubicación</a>
-                </li>
+                <!-- 
                 <li class="nav-item">
                     <a class="nav-link fs-5 me-3" aria-current="page" href="#resenas">Reseñas</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link fs-5 me-3" aria-current="page" href="#">Tratamientos</a>
                 </li>
+                -->
+                <li class="nav-item mx-2">
+                    <button class="btn btn-primary margin-right btn-primary-color">Hola <i class="fa-solid fa-phone"></i></button>
+                </li> 
                 <li class="nav-item">
-                    <a class="nav-link fs-5 me-3" aria-current="page" href="#">Cuidado dental</a>
-                </li> -->
+                    <select id="select-printer" class="form-select" aria-label="Default select example">
+                        <option value="">Elegir impresora</option>
+                      </select>
+                </li>
                 </ul>
-                <button class="btn btn-primary margin-right btn-primary-color">Hola <i
-                    class="fa-solid fa-phone"></i></button>
-            </div>
+                
+                </div>
             </div>
         </div>
     </nav>
@@ -56,7 +59,7 @@
     <main id="main-container">
         <div class="container-fluid">
             <div class="row">
-                <div id="ticket" class="col-xl-8 col-lg-8 col-sm-9 col-12 d-flex flex-column container-fluid">
+                <div id="ticket" class="col-xl-8 col-lg-8 col-sm-12 col-12 d-flex flex-column container-fluid">
                     <div id="product-search">
                         <input type="text" id="input-search-product" placeholder="Escriba el código o nombre del producto" style="width: 70%;">
                         <button id="btn-search-product">Buscar</button>
@@ -86,7 +89,7 @@
                 </div>
 
                 <!-- Inicio de tools -->
-                <div id="tools" class="col-xl-4 col-lg-4 col-sm-4 col-4">
+                <div id="tools" class="col-xl-4 col-lg-4 col-sm-12 col-12">
                     <div id="ticket-print-prev">
 
                     </div>

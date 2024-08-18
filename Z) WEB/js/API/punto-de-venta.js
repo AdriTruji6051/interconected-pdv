@@ -3,6 +3,7 @@ const inputSearchProduct = document.getElementById('input-search-product')
 const billTable = document.getElementById('bill-table-body');
 const totalH1 = document.getElementById('total');
 const submitBill = document.getElementById('submit-bill');
+const selectPrinter = document.getElementById('select-printer')
 
 var productsOnBill = {}
 var selectedProductRow
@@ -13,8 +14,18 @@ function calculateTotalBill(){
     for(var clave in productsOnBill){
         totalBill += productsOnBill[clave].IMPORTE;
     }
-
     return totalBill;
+}
+
+function manageKeyPressed(event){
+    console.log('Hey:', event.key);
+
+    var key = event.key;
+    if(key === 'Delete'){
+        deleteProductFromBill();
+    }else if(key === 'F12'){
+        collectTheBill(event);
+    }
 }
 
 const appendToBillTable = (product) => {
@@ -59,17 +70,21 @@ const appendToBillTable = (product) => {
 }
 
 const addProductToBill = async() => {
-    var res = await getProduct(inputSearchProduct.value);
-    inputSearchProduct.value = '';
-    if(typeof(res) === 'string'){
-        var product = JSON.parse(res);
-        appendToBillTable(product);
-        totalH1.innerText = `Total: ${calculateTotalBill()}`;
+    if(inputSearchProduct.value){
+        var res = await getProduct(inputSearchProduct.value);
+        inputSearchProduct.value = '';
+        if(typeof(res) === 'string'){
+            var product = JSON.parse(res);
+            appendToBillTable(product);
+            totalH1.innerText = `Total: ${calculateTotalBill()}`;
+        }else{
+            // Cuando tenga de detectar varios productos y agregarlos a una tabla secundaria
+        }
     }else{
-        // Cuando tenga de detectar varios productos y agregarlos a una tabla secundaria
+        console.log('NO HAY NADA');
     }
-}
 
+}
 
 const deleteProductFromBill = () => {
     alert('Borrar producto!...')
@@ -90,27 +105,37 @@ const collectTheBill = async (event) => {
     event.preventDefault();
 
     if(Object.keys(productsOnBill).length !== 0){
-        submitTicket(productsOnBill, calculateTotalBill());
+        submitTicket(bill = productsOnBill,printerName = selectPrinter.value, willPrint = true);
     }else{
         alert('Cuenta vacia!...')
     }
 }
 
-function manageKeyPressed(event){
-    console.log('Hey:', event.key);
-
-    var key = event.key;
-    if(key === 'Delete'){
-        deleteProductFromBill();
-    }else if(key === 'F12'){
-        collectTheBill(event);
-    }
-}
-
 
 //Eventos asociados a nuestro documento
-window.onload = function(){
+window.onload =  async function(){
+    //Focus a introducir productos
     inputSearchProduct.focus()
+
+    //Cargamos las impresoras disponibles
+    await fetch(`http://${SERVERIP}:5000/get/printers`)
+    .then(response => response.json())
+    .then(data => {
+        const printers = data.printers;
+        var isFirst = true;
+        
+        printers.forEach(printer => {
+            const printOption = document.createElement('option');
+            if(isFirst) printOption.selected = true;
+            printOption.value = printer;
+            printOption.innerText = printer;
+            selectPrinter.appendChild(printOption);
+            isFirst = false;
+        });
+    })
+    .catch(error => console.log(error));
+
+
 }
 
 billTable.addEventListener('click', function(event){
@@ -121,20 +146,14 @@ billTable.addEventListener('click', function(event){
 
 });
 
-inputSearchProduct.addEventListener('keypress', function(event) {
+inputSearchProduct.addEventListener('keypress', function(event){
     if(event.key === 'Enter'){
-        getProduct();
+        addProductToBill()
     }
 });
 
 document.addEventListener('keydown', manageKeyPressed);
 
 btnSearchProduct.addEventListener('click', addProductToBill);
-
-inputSearchProduct.addEventListener('keypress', function(event){
-    if(event.key === 'Enter'){
-        addProductToBill()
-    }
-});
 
 submitBill.addEventListener('click', collectTheBill);

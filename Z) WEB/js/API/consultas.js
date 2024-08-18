@@ -16,26 +16,27 @@ async function getProduct(codigo){
     return res
 }
 
-async function submitTicket(bill, total) {
+async function submitTicket(bill,printerName, willPrint) {
 
     const url = `http://${SERVERIP}:5000/print/new/ticket`
 
     const ticket = {
-        print: 1,
+        print: willPrint,
         products: bill,
-        total: total,
+        printerName: printerName
     }
 
-    fetch(url, {
+    await fetch(url, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: ticket
+        body: JSON.stringify(ticket)
     })
     .then(response => response.json())
     .then(data => {
-        alert('Submited!..')
+        console.log(data.impresion);
+        alert('Submited!..');
     })
     .catch((error) => {
         console.error('Error:', error);
