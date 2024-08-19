@@ -235,7 +235,6 @@ def deleteProduct():
         print(e)
         return jsonify({'status': 409})
 
-
 #   TICKET PRINTER LOGIC
 @app.route('/get/printers', methods=['GET'])
 def getPrinters():
@@ -263,7 +262,6 @@ def createTicket():
     except Exception as e:
         print(e)
         return jsonify({'impresion': 'DENEGADA'})
-
 
 @app.route('/print/ticket', methods=['GET'])
 def rePrintTicket():

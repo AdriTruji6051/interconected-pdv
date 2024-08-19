@@ -8,6 +8,7 @@
     --info-bar-back-color: white;
     --product-search-bck-color: yellow;
     --ticket-print-prev-bck-color: white;
+    --finded-prodcuts-bck-color: pink;
 }
 
 .legend img {
@@ -40,6 +41,17 @@
 #ticket-print-prev{
     background-color: var(--ticket-print-prev-bck-color);
     height: calc(100vh - 90px);
+}
+
+#finded-products{
+    background-color: var(--finded-prodcuts-bck-color);
+    height: calc(100vh - 140px);
+    overflow-y: auto;
+}
+
+#control-finded-panel{
+    background-color: blue;
+    height: 50px;
 }
 
 #product-search{

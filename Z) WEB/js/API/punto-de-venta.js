@@ -4,10 +4,19 @@ const billTable = document.getElementById('bill-table-body');
 const totalH1 = document.getElementById('total');
 const submitBill = document.getElementById('submit-bill');
 const selectPrinter = document.getElementById('select-printer')
+const findedTable = document.getElementById('finded-products-table-body');
+const findedDiv = document.getElementById('finded-products-container');
+const btnAddFindedProduct = document.getElementById('add-finded-product');
 
 var productsOnBill = {}
-var selectedProductRow
-var selectedProductRow__BDid 
+
+//Variables para eliminar
+var selectedProductRow = ''
+var selectedProductRow__BDid = ''
+
+//Variables para añadir por medio del buscador
+var findedSelectedProductRow = ''
+var findedSelectedProductRow__BDid = ''
 
 function calculateTotalBill(){
     var totalBill = 0;
@@ -25,6 +34,17 @@ function manageKeyPressed(event){
         deleteProductFromBill();
     }else if(key === 'F12'){
         collectTheBill(event);
+    }else if(key === 'Enter' && !findedDiv.hidden){
+        addFindedProductToBill();
+    //Manejo de las flechas
+    }else if(key === 'ArrowDown' && !findedDiv.hidden){
+        console.log('Abajo en busqueda')
+    }else if(key === 'ArrowUp' && !findedDiv.hidden){
+        console.log('Arriba en busqueda')
+    }else if(key === 'ArrowDown' && findedDiv.hidden){
+        console.log('Abajo en ticket')
+    }else if(key === 'ArrowUp' && findedDiv.hidden){
+        console.log('Arriba en ticket')
     }
 }
 
@@ -49,7 +69,7 @@ const appendToBillTable = (product) => {
         }
 
         // Crear una nueva fila
-        var row = document.createElement('tr');
+        const row = document.createElement('tr');
         row.id = `tr-${product['CODIGO']}`;
         row.name = product['CODIGO'];
 
@@ -69,6 +89,37 @@ const appendToBillTable = (product) => {
     }
 }
 
+const addFindedProductToBill = () => {
+    inputSearchProduct.value = '';
+    inputSearchProduct.value = findedSelectedProductRow__BDid
+    addProductToBill();
+    findedDiv.hidden = true;
+    findedSelectedProductRow = '';
+    findedSelectedProductRow__BDid = '';
+};
+
+const appendToFindedProduct = (product) => {
+    const row = document.createElement('tr');
+    row.id = `tr-fd-${product['CODIGO']}`;
+    row.name = product['CODIGO'];
+
+    row.innerHTML = `
+        <td id='des-fd-${product['CODIGO']}'>${product['DESCRIPCION']}</td>
+        <td id='pv-fd-${product['CODIGO']}'>${product['PVENTA']}</td>
+    `;
+
+    findedTable.appendChild(row);
+};
+
+const showAvaliableProducts = (products) =>{
+    btnAddFindedProduct.focus();
+    findedDiv.hidden = false;
+    findedTable.innerHTML = '';
+    products.forEach(prod => {
+        appendToFindedProduct(prod);
+    });
+};
+
 const addProductToBill = async() => {
     if(inputSearchProduct.value){
         var res = await getProduct(inputSearchProduct.value);
@@ -78,13 +129,15 @@ const addProductToBill = async() => {
             appendToBillTable(product);
             totalH1.innerText = `Total: ${calculateTotalBill()}`;
         }else{
+            console.log(res)
+            showAvaliableProducts(res);
             // Cuando tenga de detectar varios productos y agregarlos a una tabla secundaria
         }
     }else{
         console.log('NO HAY NADA');
     }
 
-}
+};
 
 const deleteProductFromBill = () => {
     alert('Borrar producto!...')
@@ -95,11 +148,13 @@ const deleteProductFromBill = () => {
             row.parentNode.removeChild(row);
             delete productsOnBill[selectedProductRow__BDid];
             totalH1.innerText = `Total: ${calculateTotalBill()}`;
+            selectedProductRow = '';
+            selectedProductRow__BDid = '';
         }else{
             console.log('El elemento no existe.')
         }
     }
-}
+};
 
 const collectTheBill = async (event) => {
     event.preventDefault();
@@ -109,7 +164,7 @@ const collectTheBill = async (event) => {
     }else{
         alert('Cuenta vacia!...')
     }
-}
+};
 
 
 //Eventos asociados a nuestro documento
@@ -134,23 +189,63 @@ window.onload =  async function(){
         });
     })
     .catch(error => console.log(error));
-
-
 }
 
+
+//Para tabla de ticket
 billTable.addEventListener('click', function(event){
     const productRow = event.target.parentNode;
-    selectedProductRow__BDid = productRow.name;
-    selectedProductRow = productRow.id;
-    document.getElementById(selectedProductRow).classList.add('table-primary')
+    const row = document.getElementById(productRow.id);
+
+    if(row.classList.contains('table-primary')){
+        row.classList.remove('table-primary');
+        selectedProductRow__BDid = '';
+        selectedProductRow = '';
+    }else{
+        if(document.getElementById(selectedProductRow)){
+            document.getElementById(selectedProductRow).classList.remove('table-primary');
+        }
+        selectedProductRow__BDid = productRow.name;
+        selectedProductRow = productRow.id;
+        document.getElementById(selectedProductRow).classList.add('table-primary');
+    }
 
 });
+
+
+//Para tabla de busquedas
+findedTable.addEventListener('click', function(event){
+    const productRow = event.target.parentNode;
+    const row = document.getElementById(productRow.id);
+
+    if(row.classList.contains('table-primary')){
+        row.classList.remove('table-primary');
+        findedSelectedProductRow__BDid = '';
+        findedSelectedProductRow = '';
+    }else{
+        if(document.getElementById(findedSelectedProductRow)){
+            document.getElementById(findedSelectedProductRow).classList.remove('table-primary');
+        }
+        findedSelectedProductRow__BDid = productRow.name;
+        findedSelectedProductRow = productRow.id;
+        document.getElementById(findedSelectedProductRow).classList.add('table-primary');
+    }
+});
+
 
 inputSearchProduct.addEventListener('keypress', function(event){
     if(event.key === 'Enter'){
         addProductToBill()
     }
 });
+
+
+
+findedDiv.addEventListener('blur', function(event){     // TO DO Arreglar esto que no funcina ya, no se pq xd
+    alert('Mejor nadota');
+});
+
+btnAddFindedProduct.addEventListener('click', addFindedProductToBill);
 
 document.addEventListener('keydown', manageKeyPressed);
 
