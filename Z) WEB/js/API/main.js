@@ -1,1 +1,1 @@
-const SERVERIP = '192.168.1.180'
+const SERVERIP = ' 10.226.181.126'

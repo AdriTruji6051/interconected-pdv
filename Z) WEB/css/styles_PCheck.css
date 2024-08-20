@@ -1,0 +1,8 @@
+#response-div{
+    overflow-y: auto;
+    height: 100vh;
+}
+
+#search-div{
+    height: 100vh;
+}

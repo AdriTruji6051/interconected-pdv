@@ -8,10 +8,15 @@ const getProducts = async() => {
     await fetch(url)
     .then(response => response.json())
     .then(data => {
+        console.log(data)
+
         document.getElementById('response').innerText = '';
         if(typeof(data.product) === 'object'){
-            data.product.forEach(element => {
-                document.getElementById('response').innerText += element + '-##-';
+            data.product.forEach(product => {
+                console.log(product)
+                const p = document.createElement('p');
+                p.innerText = `${product['DESCRIPCION']}: ${product['PVENTA']}`;
+                document.getElementById('response').appendChild(p);
             });
         }
         else{
