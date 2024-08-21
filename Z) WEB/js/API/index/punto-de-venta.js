@@ -10,6 +10,14 @@ const btnAddFindedProduct = document.getElementById('add-finded-product');
 const btnDiscount = document.getElementById('btn-aply-discount');
 const btnDeleteRow = document.getElementById('btn-delete-row');
 
+const divCantityProduct = document.getElementById('cantity-of-product');
+const formCantityProduct = document.getElementById('form-cantity-of-product');
+const inputCantityPRICE = document.getElementById('cantity-of-product-price');
+const inputCantityWEIGHT = document.getElementById('cantity-of-product-weight');
+const granelTitle = document.getElementById('granel-title');
+
+const test = document.getElementById('test');
+
 //Almacenamiento de la cuenta
 var productsOnBill = {};
 var hasDiscount = false;
@@ -55,3 +63,17 @@ document.addEventListener('keydown', manageKeyPressed);
 btnSearchProduct.addEventListener('click', addProductToBill);
 
 submitBill.addEventListener('click', collectTheBill);
+
+inputCantityWEIGHT.addEventListener('input', function(event){
+    console.log(inputCantityWEIGHT.value);
+})
+
+formCantityProduct.addEventListener('submit', function(event){
+    event.preventDefault();
+    const weight = inputCantityWEIGHT.value;
+
+
+});
+
+
+

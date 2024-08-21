@@ -65,6 +65,7 @@
                     <div id="contro-ticket-panel" class="d-flex flex-row-reverse" style="height: 50px;">
                         <button id="btn-delete-row">Eliminar producto [Supr]</button>
                         <button id="btn-aply-discount">Aplicar Mayoreo [F1]</button>
+                        <button id="test">ABRIR MODAL</button>
                     </div>
                     <div id="product-search" style="height: 50px;">
                         <div id="div-search-product" style="width: 70%;">
@@ -101,9 +102,29 @@
 
                 <!-- Inicio de tools -->
                 <div id="tools" class="col-xl-4 col-lg-4 col-sm-12 col-12">
+
+                    <!-- Inicio ticket preview BEFORE cobrar -->
                     <div id="ticket-print-prev" hidden>
 
                     </div>
+                    <!-- Final ticket preview -->
+
+                    <!-- Inicio cantidad a granel -->
+                        <div id="cantity-of-product" hidden>
+                            <h2 id="granel-title">Producto: </h2>
+                            <form action="submit" id="form-cantity-of-product">
+                                <label for="cantity-of-product-weight">Peso (Kg)</label>
+                                <input type="number" id="cantity-of-product-weight" value="1" required>
+                                <label for="cantity-of-product-price">Precio:</label>
+                                <input type="number" id="cantity-of-product-price" value="1" required>
+                                <br>
+                                <br>
+                                <button type="submit">Confirmar</button>
+                                <button type="button">Cancelar</button>
+                            </form>
+                        </div>
+                    <!-- Final cantidad a granel -->
+
                     <div id="finded-products-container" hidden>
                         <div id="finded-products">
                             <table class="table table-hover table-xl">

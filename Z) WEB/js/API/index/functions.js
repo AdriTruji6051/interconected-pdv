@@ -181,13 +181,24 @@ function focus_row_on_finded_products(row){
     }
 }
 
-const appendToBillTable = (product) => {
+const apppend_to_bill_table = (product, cantity) => {
     if(productsOnBill.hasOwnProperty(product['CODIGO'])) {
         console.log(product);
-        update_product_on_bill(product, 1);
+        update_product_on_bill(product, cantity);
     } else {
         add_product_to_bill(product);
     }
+};
+
+const venta_a_granel = (product) => {
+    divCantityProduct.hidden = false;
+    inputCantityWEIGHT.focus();
+
+    const PVENTA = product['PVENTA'];
+    granelTitle.innerText = product['DESCRIPCION'];
+    inputCantityPRICE.value = product['PVENTA'];
+    inputCantityWEIGHT.value = 1;
+    
 };
 
 const addFindedProductToBill = () => {
@@ -198,7 +209,7 @@ const addFindedProductToBill = () => {
     reset_finded_product_var();
 };
 
-const showAvaliableProducts = (products) =>{
+const show_available_products = (products) =>{
     btnAddFindedProduct.focus();
     findedDiv.hidden = false;
     findedTable.innerHTML = '';
@@ -214,9 +225,15 @@ const addProductToBill = async() => {
         
         if(typeof(res) === 'string'){
             var product = JSON.parse(res);
-            appendToBillTable(product);
+            console.log(product);
+            if(product['TVENTA'] === 'D'){
+                venta_a_granel(product);
+            }else{
+                apppend_to_bill_table(product, 1);
+            }
+
         }else{
-            showAvaliableProducts(res);
+            show_available_products(res);
         }
     }else{
         console.log('NO SE ENCONTRARO PRODUCTOS CON DICHA DESCRIPCION!...');
