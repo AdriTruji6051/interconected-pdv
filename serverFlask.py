@@ -17,126 +17,121 @@ def calculate_total_bill(products):
         total_local += IMPORTE
     return total_local
 
+def sqlite3_query(query) -> list:
+    conSQL = sqlite3.connect("./pchdata.sqlite3")
+    cursorSQL = conSQL.cursor()
+    queryResult = cursorSQL.execute(query)
+    conSQL.commit()
+    conSQL.close()
 
+    return queryResult
+
+def sqlite3_query_params(query, params) -> list:
+    res = []
+    conSQL = sqlite3.connect("./pchdata.sqlite3")
+    cursorSQL = conSQL.cursor()
+    rows = cursorSQL.execute(query, params)
+    for row in rows:
+        res.append(row)
+
+    conSQL.commit()
+    conSQL.close()
+
+    return res
+
+def product_to_json(row) -> dict:
+    jsonRow = {
+        'CODIGO': row[0],
+        'DESCRIPCION': row[1],
+        'TVENTA': row[2],
+        'PCOSTO': row[3],
+        'PVENTA': row[4],
+        'DEPT': row[5],
+        'MAYOREO': row[6],
+        'IPRIORIDAD': row[7],
+        'DINVENTARIO': row[8],
+        'DINVMINIMO': row[9],
+        'DINVMAXIMO': row[10],
+        'CHECADO_EN': row[11],
+        'PORCENTAJE_GANANCIA': row[12],
+    }
+
+    return jsonRow
+
+def parse_paramas_to_array(data) -> list:
+    params = [
+        data.get('codigo'),
+        data.get('descripcion'),
+        data.get('tipoVenta'),
+        data.get('pcosto'),
+        data.get('pventa'),
+        data.get('mayoreo'),
+        data.get('dept'),
+        data.get('prioridad'),
+        data.get('inventarioActual'),
+        data.get('inventarioMinimo'),
+        data.get('inventarioMaximo'),
+        data.get('checadoEn'),
+        data.get('porcentaje_ganancia'),
+    ]
+    return params
 
 #   GET SENTENCES
 @app.route('/get/product', methods=['GET'])
 def getProduct():
     res = None
     value = request.args.get('value')
-    conSQL = sqlite3.connect("./pchdata.sqlite3")
-    cursorSQL = conSQL.cursor()
-    rows = cursorSQL.execute(f"SELECT CODIGO, DESCRIPCION, TVENTA, PCOSTO, PVENTA, DEPT, MAYOREO, IPRIORIDAD, DINVENTARIO, DINVMINIMO, DINVMAXIMO, CHECADO_EN, PORCENTAJE_GANANCIA FROM PRODUCTOS WHERE CODIGO = '{value}'")
+    sql = "SELECT CODIGO, DESCRIPCION, TVENTA, PCOSTO, PVENTA, DEPT, MAYOREO, IPRIORIDAD, DINVENTARIO, DINVMINIMO, DINVMAXIMO, CHECADO_EN, PORCENTAJE_GANANCIA FROM PRODUCTOS WHERE CODIGO = ?"
+    rows = sqlite3_query_params(sql, [value])
     
     for row in rows:
         res = row
         break
     
     if res:
-        res = {
-            'CODIGO': res[0],
-            'DESCRIPCION': res[1],
-            'TVENTA': res[2],
-            'PCOSTO': res[3],
-            'PVENTA': res[4],
-            'DEPT': res[5],
-            'MAYOREO': res[6],
-            'IPRIORIDAD': res[7],
-            'DINVENTARIO': res[8],
-            'DINVMINIMO': res[9],
-            'DINVMAXIMO': res[10],
-            'CHECADO_EN': res[11],
-            'PORCENTAJE_GANANCIA': res[12],
-        }
-
-        res = json.dumps(res)
+        res = json.dumps(product_to_json(res))
 
     if not res:
         alreadyAdd = set()
         searchResults = []
 
-        rowsPriority = cursorSQL.execute(f"SELECT CODIGO, DESCRIPCION, TVENTA, PCOSTO, PVENTA, DEPT, MAYOREO, IPRIORIDAD, DINVENTARIO, DINVMINIMO, DINVMAXIMO, CHECADO_EN, PORCENTAJE_GANANCIA FROM PRODUCTOS WHERE DESCRIPCION LIKE '{value}%'")
+        #Obtenemos los que coincidan al principio
+        sql = "SELECT CODIGO, DESCRIPCION, TVENTA, PCOSTO, PVENTA, DEPT, MAYOREO, IPRIORIDAD, DINVENTARIO, DINVMINIMO, DINVMAXIMO, CHECADO_EN, PORCENTAJE_GANANCIA FROM PRODUCTOS WHERE DESCRIPCION LIKE ?"
+        rowsPriority = sqlite3_query_params(sql,[f'{value}%'])
         
         for row in rowsPriority:
             alreadyAdd.add(row[0])
-            jsonRow = {
-                'CODIGO': row[0],
-                'DESCRIPCION': row[1],
-                'TVENTA': row[2],
-                'PCOSTO': row[3],
-                'PVENTA': row[4],
-                'DEPT': row[5],
-                'MAYOREO': row[6],
-                'IPRIORIDAD': row[7],
-                'DINVENTARIO': row[8],
-                'DINVMINIMO': row[9],
-                'DINVMAXIMO': row[10],
-                'CHECADO_EN': row[11],
-                'PORCENTAJE_GANANCIA': row[12],
-            }
+            jsonRow = product_to_json(row)
             searchResults.append(jsonRow)
 
-        rowsComplementary = cursorSQL.execute(f"SELECT CODIGO, DESCRIPCION, TVENTA, PCOSTO, PVENTA, DEPT, MAYOREO, IPRIORIDAD, DINVENTARIO, DINVMINIMO, DINVMAXIMO, CHECADO_EN, PORCENTAJE_GANANCIA FROM PRODUCTOS WHERE DESCRIPCION LIKE '%{value}%'")
+        #Obtenemos todas las coincidencias y agregamos a los productos encontrados
+        sql = "SELECT CODIGO, DESCRIPCION, TVENTA, PCOSTO, PVENTA, DEPT, MAYOREO, IPRIORIDAD, DINVENTARIO, DINVMINIMO, DINVMAXIMO, CHECADO_EN, PORCENTAJE_GANANCIA FROM PRODUCTOS WHERE DESCRIPCION LIKE ?"
+        rowsComplementary = sqlite3_query_params(sql,[f'%{value}%'])
+
         for row in rowsComplementary:
             if row[0] not in alreadyAdd:
-                jsonRow = {
-                    'CODIGO': row[0],
-                    'DESCRIPCION': row[1],
-                    'TVENTA': row[2],
-                    'PCOSTO': row[3],
-                    'PVENTA': row[4],
-                    'DEPT': row[5],
-                    'MAYOREO': row[6],
-                    'IPRIORIDAD': row[7],
-                    'DINVENTARIO': row[8],
-                    'DINVMINIMO': row[9],
-                    'DINVMAXIMO': row[10],
-                    'CHECADO_EN': row[11],
-                    'PORCENTAJE_GANANCIA': row[12],
-                }
+                jsonRow = product_to_json(row)
                 searchResults.append(jsonRow)
 
         res = searchResults
             
-
-    conSQL.close()
     return jsonify({'product': res})
 
 @app.route('/get/productById', methods=['GET'])
 def getProductById():
     res = None
     value = request.args.get('value')
-    conSQL = sqlite3.connect("./pchdata.sqlite3")
-    cursorSQL = conSQL.cursor()
-    rows = cursorSQL.execute(f"SELECT CODIGO, DESCRIPCION, TVENTA, PCOSTO, PVENTA, DEPT, MAYOREO, IPRIORIDAD, DINVENTARIO, DINVMINIMO, DINVMAXIMO, CHECADO_EN, PORCENTAJE_GANANCIA FROM PRODUCTOS WHERE CODIGO = '{value}'")
+    sql = "SELECT CODIGO, DESCRIPCION, TVENTA, PCOSTO, PVENTA, DEPT, MAYOREO, IPRIORIDAD, DINVENTARIO, DINVMINIMO, DINVMAXIMO, CHECADO_EN, PORCENTAJE_GANANCIA FROM PRODUCTOS WHERE CODIGO = ?"
+    rows = sqlite3_query_params(sql, [value])
 
     for row in rows:
         res = row
         break
 
-    conSQL.close()
-
     if res:
-        res = {
-            'CODIGO': res[0],
-            'DESCRIPCION': res[1],
-            'TVENTA': res[2],
-            'PCOSTO': res[3],
-            'PVENTA': res[4],
-            'DEPT': res[5],
-            'MAYOREO': res[6],
-            'IPRIORIDAD': res[7],
-            'DINVENTARIO': res[8],
-            'DINVMINIMO': res[9],
-            'DINVMAXIMO': res[10],
-            'CHECADO_EN': res[11],
-            'PORCENTAJE_GANANCIA': res[12],
-        }
-
-        res = json.dumps(res)
+        res = json.dumps(product_to_json(res))
         
     return jsonify({'product': res})
-
 
 #   PRODUCT CRUD LOGIC
 @app.route('/insert/product', methods=['POST'])
@@ -146,28 +141,9 @@ def insertProduct():
         if data is None:
             return jsonify({'error': 'No se recibió ningún JSON'}), 400
 
-        params = [
-            data.get('codigo'),
-            data.get('descripcion'),
-            data.get('tipoVenta'),
-            data.get('pcosto'),
-            data.get('pventa'),
-            data.get('mayoreo'),
-            data.get('dept'),
-            data.get('prioridad'),
-            data.get('inventarioActual'),
-            data.get('inventarioMinimo'),
-            data.get('inventarioMaximo'),
-            data.get('checadoEn'),
-            data.get('porcentaje_ganancia'),
-        ]
-        
-        conSQL = sqlite3.connect("./pchdata.sqlite3")
-        cursorSQL = conSQL.cursor()
+        params = parse_paramas_to_array(data)
         sql = 'INSERT INTO PRODUCTOS (CODIGO, DESCRIPCION, TVENTA, PCOSTO, PVENTA, DEPT, MAYOREO, IPRIORIDAD, DINVENTARIO, DINVMINIMO, DINVMAXIMO, CHECADO_EN, PORCENTAJE_GANANCIA) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)'
-        cursorSQL.execute(sql, params)
-        conSQL.commit()
-        conSQL.close()
+        sqlite3_query_params(sql, params)
 
         return jsonify({'status': 201})
     
@@ -182,28 +158,9 @@ def updateProduct():
         if data is None:
             return jsonify({'error': 'No se recibió ningún JSON'}), 400
 
-        params = [
-            data.get('descripcion'),
-            data.get('tipoVenta'),
-            data.get('pcosto'),
-            data.get('pventa'),
-            data.get('mayoreo'),
-            data.get('dept'),
-            data.get('prioridad'),
-            data.get('inventarioActual'),
-            data.get('inventarioMinimo'),
-            data.get('inventarioMaximo'),
-            data.get('checadoEn'),
-            data.get('porcentaje_ganancia'),
-            data.get('codigo'),
-        ]
-        
-        conSQL = sqlite3.connect("./pchdata.sqlite3")
-        cursorSQL = conSQL.cursor()
+        params = parse_paramas_to_array(data)
         sql = 'UPDATE PRODUCTOS SET DESCRIPCION = ?, TVENTA = ?, PCOSTO = ?, PVENTA = ?, DEPT = ?, MAYOREO = ?, IPRIORIDAD = ?, DINVENTARIO = ?, DINVMINIMO = ?, DINVMAXIMO = ?, CHECADO_EN = ?, PORCENTAJE_GANANCIA = ? WHERE CODIGO = ?;'
-        cursorSQL.execute(sql, params)
-        conSQL.commit()
-        conSQL.close()
+        sqlite3_query_params(sql,params)
 
         return jsonify({'status': 201})
     
@@ -221,13 +178,9 @@ def deleteProduct():
         params = [
             data.get('codigo')
         ]
-        
-        conSQL = sqlite3.connect("./pchdata.sqlite3")
-        cursorSQL = conSQL.cursor()
+    
         sql = 'DELETE FROM PRODUCTOS WHERE CODIGO = ?;'
-        cursorSQL.execute(sql, params)
-        conSQL.commit()
-        conSQL.close()
+        sqlite3_query_params(sql,params)
 
         return jsonify({'status': 202})
     
@@ -272,13 +225,11 @@ def openHTML():
     run(['index.html'], shell=False, creationflags=CREATE_NEW_CONSOLE)
 
 def startFlaskServer():
-    app.run(debug=False, host=' 10.226.181.126', port=5000)
+    app.run(debug=False,host='192.168.1.180', port=5000)
 
 if __name__ == '__main__':
-    #Iniciamos el servicio y abrimos la pagina web :)
     flaskServer = threading.Thread(target=startFlaskServer)
     html = threading.Thread(target=openHTML)
     
     flaskServer.start()
     #html.start()
-    

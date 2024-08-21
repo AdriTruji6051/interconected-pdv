@@ -34,7 +34,7 @@ function calculateTotalBill(productsToCalculate){
 };
 
 function manageKeyPressed(event){
-    console.log('Hey:', event.key);
+    console.log('Hey:', event.key, 'Disc:', hasDiscount);
 
     var key = event.key;
     if(key === 'Delete'){
@@ -90,42 +90,46 @@ const create_product_row = (product) =>{
         <td id='des-${product['CODIGO']}'>${product['DESCRIPCION']}</td>
         <td id='pv-${product['CODIGO']}'>${product['PVENTA']}</td>
         <td id='can-${product['CODIGO']}'>${1}</td>
-        <td id='imp-${product['CODIGO']}'>${product['PVENTA']}</td>
+        <td id='imp-${product['CODIGO']}'>${product['IMPORTE']}</td>
     `;
 
     // Añadir la fila a la tabla y dirigirse a ella si no existe
     billTable.appendChild(row);
+    focus_row_on_ticket(row);
     row.scrollIntoView({ behavior: 'smooth' });
 }
 
-const update_product_on_bill = (product) => {
+const update_product_on_bill = (product, numOfProd) => {
     const prOnBill = productsOnBill[product['CODIGO']];
-    prOnBill.CANTIDAD += 1;
-    prOnBill.IMPORTE = prOnBill.CANTIDAD * prOnBill.PVENTA;
+    prOnBill.CANTIDAD += numOfProd;
+    prOnBill.IMPORTE = hasDiscount ? prOnBill.CANTIDAD * prOnBill.MAYOREO : prOnBill.CANTIDAD * prOnBill.PVENTA;
 
     document.getElementById(`can-${product['CODIGO']}`).innerText = prOnBill.CANTIDAD;
     document.getElementById(`imp-${product['CODIGO']}`).innerText = prOnBill.IMPORTE;
     document.getElementById(`tr-${product['CODIGO']}`).scrollIntoView({ behavior: 'smooth' });
+
+    if(numOfProd > 0){  
+        focus_row_on_ticket(document.getElementById(`tr-${product['CODIGO']}`));
+    }
+
+    totalH1.innerText = `Total: ${calculateTotalBill(productsOnBill)}`;
 };
 
 const add_product_to_bill = (product) => {
     //Añadimos a la cuenta en el almacenamiento
     productsOnBill[product['CODIGO']] = {
+        CODIGO: product['CODIGO'],
         DESCRIPCION: product['DESCRIPCION'],
         PVENTA: product['PVENTA'],
+        MAYOREO: product['PCOSTO'] < product['MAYOREO'] ? product['MAYOREO'] : product['PVENTA'],
+        PCOSTO: product['PCOSTO'] ? product['PCOSTO'] : product['PVENTA'],
         CANTIDAD: 1,
-        IMPORTE: product['PVENTA'],
+        IMPORTE: hasDiscount ? product['MAYOREO'] : product['PVENTA'],
     }
 
-    create_product_row(product);
-};
+    create_product_row(productsOnBill[product['CODIGO']]);
 
-const appendToBillTable = (product) => {
-    if(productsOnBill.hasOwnProperty(product['CODIGO'])) {
-        update_product_on_bill(product);
-    } else {
-        add_product_to_bill(product);
-    }
+    totalH1.innerText = `Total: ${calculateTotalBill(productsOnBill)}`;
 };
 
 const append_new_finded_product_row = (product) => {
@@ -139,11 +143,51 @@ const append_new_finded_product_row = (product) => {
     `;
 
     findedTable.appendChild(row);
+    
 };
 
 const reset_finded_product_var = () =>{
     findedSelectedProductRow = '';
     findedSelectedProductRow__BDid = '';
+};
+
+function focus_row_on_ticket (row){
+    if(row.classList.contains('table-primary')){
+        row.classList.remove('table-primary');
+        selectedProductRow__BDid = '';
+        selectedProductRow = '';
+    }else{
+        if(document.getElementById(selectedProductRow)){
+            document.getElementById(selectedProductRow).classList.remove('table-primary');
+        }
+        selectedProductRow__BDid = row.name;
+        selectedProductRow = row.id;
+        document.getElementById(selectedProductRow).classList.add('table-primary');
+    }
+};
+
+function focus_row_on_finded_products(row){
+    if(row.classList.contains('table-primary')){
+        row.classList.remove('table-primary');
+        findedSelectedProductRow__BDid = '';
+        findedSelectedProductRow = '';
+    }else{
+        if(document.getElementById(findedSelectedProductRow)){
+            document.getElementById(findedSelectedProductRow).classList.remove('table-primary');
+        }
+        findedSelectedProductRow__BDid = row.name;
+        findedSelectedProductRow = row.id;
+        document.getElementById(findedSelectedProductRow).classList.add('table-primary');
+    }
+}
+
+const appendToBillTable = (product) => {
+    if(productsOnBill.hasOwnProperty(product['CODIGO'])) {
+        console.log(product);
+        update_product_on_bill(product, 1);
+    } else {
+        add_product_to_bill(product);
+    }
 };
 
 const addFindedProductToBill = () => {
@@ -171,7 +215,6 @@ const addProductToBill = async() => {
         if(typeof(res) === 'string'){
             var product = JSON.parse(res);
             appendToBillTable(product);
-            totalH1.innerText = `Total: ${calculateTotalBill(productsOnBill)}`;
         }else{
             showAvaliableProducts(res);
         }
@@ -208,38 +251,21 @@ const collectTheBill = async (event) => {
     }
 };
 
-function focusRowOnTicket (event){
-    const productRow = event.target.parentNode;
-    const row = document.getElementById(productRow.id);
-
-    if(row.classList.contains('table-primary')){
-        row.classList.remove('table-primary');
-        selectedProductRow__BDid = '';
-        selectedProductRow = '';
-    }else{
-        if(document.getElementById(selectedProductRow)){
-            document.getElementById(selectedProductRow).classList.remove('table-primary');
-        }
-        selectedProductRow__BDid = productRow.name;
-        selectedProductRow = productRow.id;
-        document.getElementById(selectedProductRow).classList.add('table-primary');
-    }
+function selectRowOnTicket(event){
+    const row = event.target.parentNode;
+    focus_row_on_ticket(row);
 };
 
-function focusRowOnFindedProducts(event){
-    const productRow = event.target.parentNode;
-    const row = document.getElementById(productRow.id);
+function selectRowOnFindedProducts(event){
+    const row = event.target.parentNode;
+    focus_row_on_finded_products(row);
+};
 
-    if(row.classList.contains('table-primary')){
-        row.classList.remove('table-primary');
-        findedSelectedProductRow__BDid = '';
-        findedSelectedProductRow = '';
-    }else{
-        if(document.getElementById(findedSelectedProductRow)){
-            document.getElementById(findedSelectedProductRow).classList.remove('table-primary');
-        }
-        findedSelectedProductRow__BDid = productRow.name;
-        findedSelectedProductRow = productRow.id;
-        document.getElementById(findedSelectedProductRow).classList.add('table-primary');
-    }
-}
+const undoOrAplyDiscount = () =>{
+    hasDiscount = !hasDiscount;
+
+    btnDiscount.innerText = !hasDiscount ? 'Aplicar Mayoreo [F1]' : 'Deshacer Mayoreo [F1]';
+
+    for(let key in productsOnBill) update_product_on_bill(productsOnBill[key], 0);
+    
+};

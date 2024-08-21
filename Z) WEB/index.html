@@ -9,15 +9,15 @@
 </head>
 <body>
     <!-- Inicio navbar -->
-    <nav class="navbar bg-body-tertiary navbar-expand-lg fixed-top">
-        <div class="container-fluid">
+    <nav class="navbar bg-body-tertiary navbar-expand-lg fixed-top" id="navbar">
+        <div class="container-fluid" style="height: 50px;">
             <a class="navbar-brand legend" href="#">
-            <img src="./img/LOGO_DULCERÍA_COLOR.png" alt="Logo de la Dulceria MyA" class="img-fluid"/>
+            <img src="./img/LOGO_DULCERÍA_COLOR.png" alt="Logo de la Dulceria MyA" class="img-fluid" />
             Dulceria MyA
             </a>
     
             <!-- Abrir menu despegable DISPOSITIVOS PEQUEÑOS -->
-            <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar"
+            <button class="navbar-toggler" style="height: 38px; margin-bottom: 100px; margin-top: -15px;" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar"
             aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
             </button>
@@ -25,7 +25,7 @@
             <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
             <!-- Cerarr menu despegable -->
             <div class="offcanvas-header">
-                <h5 class="offcanvas-title" id="offcanvasNavbarLabel">Dental Gutierrez</h5>
+                <h5 class="offcanvas-title" id="offcanvasNavbarLabel">Dulceria MyA</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
             </div>
     
@@ -59,11 +59,21 @@
     <main id="main-container">
         <div class="container-fluid">
             <div class="row">
+                <!-- Inicio contenedor tickets -->
                 <div id="ticket" class="col-xl-8 col-lg-8 col-sm-12 col-12 d-flex flex-column container-fluid">
-                    <div id="product-search">
-                        <input type="text" id="input-search-product" placeholder="Escriba el código o nombre del producto" style="width: 70%;">
-                        <button id="btn-search-product">Buscar</button>
+                    <!-- Inicio control y busqueda panel -->
+                    <div id="contro-ticket-panel" class="d-flex flex-row-reverse" style="height: 50px;">
+                        <button id="btn-delete-row">Eliminar producto [Supr]</button>
+                        <button id="btn-aply-discount">Aplicar Mayoreo [F1]</button>
                     </div>
+                    <div id="product-search" style="height: 50px;">
+                        <div id="div-search-product" style="width: 70%;">
+                            <input type="text" id="input-search-product" placeholder="Escriba el código o nombre del producto">
+                            <button id="btn-search-product">Buscar</button>
+                        </div>
+                    </div>
+                    <!-- Final control y busqueda panel -->
+
                     <div id="bill">
                         <table class="table table-hover table-xl">
                             <thead id="bill-table-head">
@@ -81,12 +91,13 @@
                     </div>
 
                     <!-- Inicio info bar -->
-                    <div id="info-bar">
+                    <div id="info-bar" class="container-fluid">
                         <h1 id="total">Total: 0.00</h1>
                         <button id="submit-bill">F12 - Cobrar </button>
                     </div>
                     <!-- Final info bar -->
                 </div>
+                <!-- Final div tickets -->
 
                 <!-- Inicio de tools -->
                 <div id="tools" class="col-xl-4 col-lg-4 col-sm-12 col-12">
