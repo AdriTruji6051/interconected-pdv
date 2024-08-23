@@ -225,7 +225,7 @@ def openHTML():
     run(['index.html'], shell=False, creationflags=CREATE_NEW_CONSOLE)
 
 def startFlaskServer():
-    app.run(debug=False,host='192.168.1.180', port=5000)
+    app.run(debug=False,host='192.168.100.45', port=5000)
 
 if __name__ == '__main__':
     flaskServer = threading.Thread(target=startFlaskServer)

@@ -59,13 +59,18 @@
 }
 
 #cantity-of-product{
-    background-color: lightcoral;
+    background-color: white;
     height: calc(100vh - 50px);
 }
 
 #product-search{
     border: 2px solid black;
     height: 10%;
+}
+
+#complete-ticket-bill{
+    background-color: blueviolet;
+    height: calc(100vh - 50px);
 }
 
 #bill{

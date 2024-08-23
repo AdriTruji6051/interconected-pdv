@@ -110,7 +110,7 @@
                     <!-- Final ticket preview -->
 
                     <!-- Inicio cantidad a granel -->
-                        <div id="cantity-of-product" hidden>
+                        <div id="cantity-of-product" tabindex="0" hidden>
                             <h2 id="granel-title">Producto: </h2>
                             <form action="submit" id="form-cantity-of-product">
                                 <label for="cantity-of-product-weight">Peso (Kg)</label>
@@ -120,12 +120,13 @@
                                 <br>
                                 <br>
                                 <button type="submit">Confirmar</button>
-                                <button type="button">Cancelar</button>
+                                <button type="button" id="btn-cancel-granel">Cancelar</button>
                             </form>
                         </div>
                     <!-- Final cantidad a granel -->
-
-                    <div id="finded-products-container" hidden>
+                    
+                    <!-- Inicio finded prodcuts panel -->
+                    <div id="finded-products-container" tabindex="0" hidden>
                         <div id="finded-products">
                             <table class="table table-hover table-xl">
                                 <thead id="finded-products-table-head">
@@ -141,8 +142,16 @@
                             <button id="add-finded-product" class="btn btn-primary">Agregar producto</button>
                         </div>
                     </div>
+                    <!-- Final finded products panel -->
 
+                    <div id="complete-the-ticket-submit" tabindex="0" hidden>
+                        <div id="ticket-submit-container">
+                            <h1 id="complete-ticket-bill">...</h1>
+                            <input type="number" step="any" id="change-for-ticket">
+                        </div>
+                    </div>
                 </div>
+                <!-- Final tools div -->
             </div>
         </div>
     </main>

@@ -194,6 +194,7 @@ const apppend_to_bill_table = (product, cantity) => {
 
 const venta_a_granel = (product) => {
     divCantityProduct.hidden = false;
+    divCantityProduct.focus();
     inputCantityWEIGHT.focus();
 
     granelProduct = product;
@@ -212,8 +213,8 @@ const addFindedProductToBill = () => {
 };
 
 const show_available_products = (products) =>{
-    btnAddFindedProduct.focus();
     findedDiv.hidden = false;
+    findedDiv.focus();
     findedTable.innerHTML = '';
     products.forEach(prod => {
         append_new_finded_product_row(prod);

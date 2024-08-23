@@ -37,7 +37,7 @@ def print_ticket(text, printer_name) -> bool:
         hDC.StartPage()
 
         # Imprimir una imagen
-        bmp = Image.open('./logo.png')
+        bmp = Image.open('./logo.jpg')
         bmp = bmp.resize((200, 200))  # Resize as needed
 
 
