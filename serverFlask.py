@@ -205,9 +205,12 @@ def createTicket():
         willPrint = bool(data.get('print'))
         products = data.get('products')
         printerName = data.get('printerName')
-        total = calculate_total_bill(products)
+        change = data.get('change')
+        notes = data.get('notes')
 
-        if willPrint : print_ticket(create_ticket_struct(products),printerName)
+        ticketStruct = create_ticket_struct(products, change, notes)
+
+        if willPrint : print_ticket(ticketStruct,printerName)
 
         #AQUI DEBEMOS CREAR LA ESTRUCTURA DEL TICKET Y GUARDARLO EN LA BD
 

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Punto de Venta</title>
-    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css">
     <link rel="stylesheet" href="css/styles_PDV.css">
 </head>
 <body>
@@ -104,25 +104,32 @@
                 <div id="tools" class="col-xl-4 col-lg-4 col-sm-12 col-12">
 
                     <!-- Inicio ticket preview BEFORE cobrar -->
-                    <div id="ticket-print-prev" hidden>
-
-                    </div>
+                    <div id="complete-the-ticket-submit" tabindex="0" hidden>
+                        <h1 id="complete-ticket-bill">...</h1>
+                        <h3 id="cantity-of-change">...</h3>
+                        <form action="submit" id="ticket-change&notes-form">
+                            <input type="number" step="any" id="change-for-ticket">
+                            <textarea id="notes-for-sell" placeholder="Introduce las notas de venta" hidden></textarea>
+                            <button type="button" id="show-notes">Agregar notas de venta</button>
+                            <button type="submit">Cobrar</button>
+                        </form>
+                    </div>                    
                     <!-- Final ticket preview -->
 
                     <!-- Inicio cantidad a granel -->
-                        <div id="cantity-of-product" tabindex="0" hidden>
-                            <h2 id="granel-title">Producto: </h2>
-                            <form action="submit" id="form-cantity-of-product">
-                                <label for="cantity-of-product-weight">Peso (Kg)</label>
-                                <input type="number" step="any" id="cantity-of-product-weight" value="1" required>
-                                <label for="cantity-of-product-price">Precio:</label>
-                                <input type="number" id="cantity-of-product-price" value="1" required>
-                                <br>
-                                <br>
-                                <button type="submit">Confirmar</button>
-                                <button type="button" id="btn-cancel-granel">Cancelar</button>
-                            </form>
-                        </div>
+                    <div id="cantity-of-product" tabindex="0" hidden>
+                        <h2 id="granel-title">Producto: </h2>
+                        <form action="submit" id="form-cantity-of-product">
+                            <label for="cantity-of-product-weight">Peso (Kg)</label>
+                            <input type="number" step="any" id="cantity-of-product-weight" value="1" required>
+                            <label for="cantity-of-product-price">Precio:</label>
+                            <input type="number" id="cantity-of-product-price" value="1" required>
+                            <br>
+                            <br>
+                            <button type="submit">Confirmar</button>
+                            <button type="button" id="btn-cancel-granel">Cancelar</button>
+                        </form>
+                    </div>
                     <!-- Final cantidad a granel -->
                     
                     <!-- Inicio finded prodcuts panel -->
@@ -143,13 +150,6 @@
                         </div>
                     </div>
                     <!-- Final finded products panel -->
-
-                    <div id="complete-the-ticket-submit" tabindex="0" hidden>
-                        <div id="ticket-submit-container">
-                            <h1 id="complete-ticket-bill">...</h1>
-                            <input type="number" step="any" id="change-for-ticket">
-                        </div>
-                    </div>
                 </div>
                 <!-- Final tools div -->
             </div>
@@ -158,8 +158,9 @@
 
     <script src="js/API/main.js"></script>
     <script src="js/API/consultas.js"></script>
+    <script src="js/API/index/finded-products.js"></script>
     <script src="js/API/index/functions.js"></script>
     <script src="js/API/index/punto-de-venta.js"></script>
-    <script src="js/bootstrap.bundle.min.js"></script>
+    <script src="js/bootsrap/bootstrap.bundle.min.js"></script>
 </body>
 </html>

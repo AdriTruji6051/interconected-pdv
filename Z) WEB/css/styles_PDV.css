@@ -68,7 +68,7 @@
     height: 10%;
 }
 
-#complete-ticket-bill{
+#complete-the-ticket-submit{
     background-color: blueviolet;
     height: calc(100vh - 50px);
 }

@@ -21,6 +21,7 @@ const btnCancelGranel = document.getElementById('btn-cancel-granel');
 
 const ticketSubmitDiv = document.getElementById('complete-the-ticket-submit');
 const inputChange = document.getElementById('change-for-ticket');
+const ticketSubmitForm = document.getElementById('ticket-change&notes-form');
 
 const test = document.getElementById('test');
 
@@ -70,7 +71,10 @@ btnSearchProduct.addEventListener('click', addProductToBill);
 submitBill.addEventListener('click', function(event){
     ticketSubmitDiv.hidden = false;
     ticketSubmitDiv.focus();
-    inputChange.value = calculateTotalBill(productsOnBill);
+    const total = calculateTotalBill(productsOnBill); 
+    inputChange.value = total;
+    document.getElementById('complete-ticket-bill').innerText = `Cobrar: $ ${total}`;
+    document.getElementById('cantity-of-change').innerText = '$ 0.00';
 
 });
 
@@ -117,5 +121,20 @@ ticketSubmitDiv.addEventListener('focusout', function(event){
     }
 });
 
+document.getElementById('show-notes').addEventListener('click', function(){
+    document.getElementById('notes-for-sell').hidden = false;
+});
 
+
+inputChange.addEventListener('input', function(){
+    const total = inputChange.value - calculateTotalBill(productsOnBill);
+    document.getElementById('cantity-of-change').innerText =  total < 0 ? 'No alcanza!...' :  `$ ${total}`;
+});
+
+ticketSubmitForm.addEventListener('submit', function(event){
+    event.preventDefault();
+    const notes = document.getElementById('notes-for-sell').value;
+    submitTicket(productsOnBill, inputChange.value, notes, selectPrinter.value, true);
+    ticketSubmitDiv.hidden = true;
+});
 

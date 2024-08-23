@@ -10,9 +10,9 @@ def list_printers() -> list:
     
     return avaliable_printers
 
-def create_ticket_struct(products):
+def create_ticket_struct(products, change, notes):
     total_local = 0
-    TICKET_TXT = ''
+    TICKET_TXT = notes + '#-##-# -------------------------------'
 
     for key in products:
         DESCRIPCION = products[key]['DESCRIPCION']
@@ -21,9 +21,9 @@ def create_ticket_struct(products):
         IMPORTE = products[key]['IMPORTE']
         total_local += IMPORTE
 
-        TICKET_TXT += str(CANTIDAD) + ' ' + str(DESCRIPCION) + '    ' + str(IMPORTE) + str('\n')
+        TICKET_TXT += str(CANTIDAD) + ' ' + str(DESCRIPCION) + '    ' + str(IMPORTE) + '#-# -------------------------------'
     
-    TICKET_TXT += str(f'\n\nTotal: {total_local}')
+    TICKET_TXT += str(f'#-##-#Total: {total_local} #-#Cambio: {float(total_local) - float(change)}')
 
     return TICKET_TXT
 
@@ -38,24 +38,24 @@ def print_ticket(text, printer_name) -> bool:
 
         # Imprimir una imagen
         bmp = Image.open('./logo.jpg')
-        bmp = bmp.resize((200, 200))  # Resize as needed
+        bmp = bmp.resize((250, 250))  # Resize as needed
 
 
         y = 50  # Initial Y position
 
         # Convertir la imagen en un formato adecuado para imprimir
         dib = ImageWin.Dib(bmp)
-        dib.draw(hDC.GetHandleOutput(), (10, y, 200, y + 200))
+        dib.draw(hDC.GetHandleOutput(), (10, y, 250, y + 250))
 
-        y += 200
+        y += 250
 
         font = win32ui.CreateFont({
             "name": "Arial",
-            "height": 30,  # Ajuste la altura de la fuente para adaptarse a 80mm
+            "height": 35,  # Ajuste la altura de la fuente para adaptarse a 80mm
         })
         hDC.SelectObject(font)
 
-        lines = text.split('\n')
+        lines = text.split('#-#')
         
         for line in lines:
             hDC.TextOut(10, y, line)  # Coordenada X ajustada
