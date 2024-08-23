@@ -89,7 +89,7 @@ const create_product_row = (product) =>{
         <td id='cod-${product['CODIGO']}'>${product['CODIGO']}</td>
         <td id='des-${product['CODIGO']}'>${product['DESCRIPCION']}</td>
         <td id='pv-${product['CODIGO']}'>${product['PVENTA']}</td>
-        <td id='can-${product['CODIGO']}'>${1}</td>
+        <td id='can-${product['CODIGO']}'>${product['CANTIDAD']}</td>
         <td id='imp-${product['CODIGO']}'>${product['IMPORTE']}</td>
     `;
 
@@ -101,7 +101,7 @@ const create_product_row = (product) =>{
 
 const update_product_on_bill = (product, numOfProd) => {
     const prOnBill = productsOnBill[product['CODIGO']];
-    prOnBill.CANTIDAD += numOfProd;
+    prOnBill.CANTIDAD = parseFloat(prOnBill.CANTIDAD) + parseFloat(numOfProd);
     prOnBill.IMPORTE = hasDiscount ? prOnBill.CANTIDAD * prOnBill.MAYOREO : prOnBill.CANTIDAD * prOnBill.PVENTA;
 
     document.getElementById(`can-${product['CODIGO']}`).innerText = prOnBill.CANTIDAD;
@@ -115,7 +115,8 @@ const update_product_on_bill = (product, numOfProd) => {
     totalH1.innerText = `Total: ${calculateTotalBill(productsOnBill)}`;
 };
 
-const add_product_to_bill = (product) => {
+const add_product_to_bill = (product, cantity) => {
+    console.log('HOLIS BOBIS: ',product, cantity);
     //Añadimos a la cuenta en el almacenamiento
     productsOnBill[product['CODIGO']] = {
         CODIGO: product['CODIGO'],
@@ -123,8 +124,8 @@ const add_product_to_bill = (product) => {
         PVENTA: product['PVENTA'],
         MAYOREO: product['PCOSTO'] < product['MAYOREO'] ? product['MAYOREO'] : product['PVENTA'],
         PCOSTO: product['PCOSTO'] ? product['PCOSTO'] : product['PVENTA'],
-        CANTIDAD: 1,
-        IMPORTE: hasDiscount ? product['MAYOREO'] : product['PVENTA'],
+        CANTIDAD: cantity,
+        IMPORTE: hasDiscount ? product['MAYOREO'] * cantity  : product['PVENTA'] * cantity,
     }
 
     create_product_row(productsOnBill[product['CODIGO']]);
@@ -186,7 +187,8 @@ const apppend_to_bill_table = (product, cantity) => {
         console.log(product);
         update_product_on_bill(product, cantity);
     } else {
-        add_product_to_bill(product);
+        console.log('NEW')
+        add_product_to_bill(product, cantity);
     }
 };
 
@@ -194,10 +196,10 @@ const venta_a_granel = (product) => {
     divCantityProduct.hidden = false;
     inputCantityWEIGHT.focus();
 
-    const PVENTA = product['PVENTA'];
-    granelTitle.innerText = product['DESCRIPCION'];
-    inputCantityPRICE.value = product['PVENTA'];
-    inputCantityWEIGHT.value = 1;
+    granelProduct = product;
+    granelTitle.innerText = product.DESCRIPCION;
+    inputCantityPRICE.value = product.PVENTA;
+    inputCantityWEIGHT.value = 1.000;
     
 };
 
@@ -226,6 +228,8 @@ const addProductToBill = async() => {
         if(typeof(res) === 'string'){
             var product = JSON.parse(res);
             console.log(product);
+
+            //Si es D significa que es producto a granel
             if(product['TVENTA'] === 'D'){
                 venta_a_granel(product);
             }else{

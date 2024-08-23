@@ -30,6 +30,9 @@ var selectedProductRow__BDid = '';
 var findedSelectedProductRow = '';
 var findedSelectedProductRow__BDid = '';
 
+//Codigo de producto a granel
+var granelProduct = '';
+
 window.onload =  onLoadFunction();
 
 //Para tabla de ticket
@@ -64,15 +67,23 @@ btnSearchProduct.addEventListener('click', addProductToBill);
 
 submitBill.addEventListener('click', collectTheBill);
 
-inputCantityWEIGHT.addEventListener('input', function(event){
-    console.log(inputCantityWEIGHT.value);
+inputCantityWEIGHT.addEventListener('input', function(){
+    const PVENTA = granelProduct.PVENTA;
+    inputCantityPRICE.value = inputCantityWEIGHT.value * PVENTA;
+})
+
+inputCantityPRICE.addEventListener('input', function(){
+    const PVENTA = granelProduct.PVENTA;
+    inputCantityWEIGHT.value = inputCantityPRICE.value / PVENTA;
 })
 
 formCantityProduct.addEventListener('submit', function(event){
     event.preventDefault();
     const weight = inputCantityWEIGHT.value;
-
-
+    apppend_to_bill_table(granelProduct, weight);
+    granelProduct = '';
+    divCantityProduct.hidden = true;
+    inputSearchProduct.focus();
 });
 
 
