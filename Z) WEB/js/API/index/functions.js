@@ -35,11 +35,13 @@ function calculateTotalBill(productsToCalculate){
     for(var prod_cd in productsToCalculate){
         totalBill += productsToCalculate[prod_cd].IMPORTE;
     }
+
+    totalH1.innerText = `Total: ${totalBill}`;
     return totalBill;
 };
 
 function manageKeyPressed(event){
-    console.log('Hey:', event.key, 'Disc:', hasDiscount);
+    //console.log('Hey:', event.key);
 
     var key = event.key;
     if(key === 'Delete'){
@@ -48,15 +50,16 @@ function manageKeyPressed(event){
         collectTheBill(event);
     }else if(key === 'Enter' && !findedDiv.hidden){
         addFindedProductToBill();
+
     //Manejo de las flechas
     }else if(key === 'ArrowDown' && !findedDiv.hidden){
-        console.log('Abajo en busqueda')
+        go_to_next_finded_product();
     }else if(key === 'ArrowUp' && !findedDiv.hidden){
-        console.log('Arriba en busqueda')
+        go_to_previous_finded_product();
     }else if(key === 'ArrowDown' && findedDiv.hidden){
-        console.log('Abajo en ticket')
+        go_to_next_product();
     }else if(key === 'ArrowUp' && findedDiv.hidden){
-        console.log('Arriba en ticket')
+        go_to_previous_product();
     }
 };
 
@@ -121,7 +124,6 @@ const update_product_on_bill = (product, numOfProd) => {
 };
 
 const add_product_to_bill = (product, cantity) => {
-    console.log('HOLIS BOBIS: ',product, cantity);
     //Añadimos a la cuenta en el almacenamiento
     productsOnBill[product['CODIGO']] = {
         CODIGO: product['CODIGO'],
@@ -141,12 +143,26 @@ const add_product_to_bill = (product, cantity) => {
 
 
 function focus_row_on_ticket (row){
+    console.log(row);
     if(document.getElementById(selectedProductRow)){
         document.getElementById(selectedProductRow).classList.remove('table-primary');
     }
     selectedProductRow__BDid = row.name;
+    console.log(row.name);
     selectedProductRow = row.id;
     document.getElementById(selectedProductRow).classList.add('table-primary');
+};
+
+const go_to_next_product = () => {
+    const actualNode = document.getElementById(selectedProductRow);
+    const nextNode = actualNode.nextSibling;
+    focus_row_on_ticket(nextNode);
+};
+
+const go_to_previous_product = () => {
+    const actualNode = document.getElementById(selectedProductRow);
+    const previousNode = actualNode.previousSibling;
+    focus_row_on_ticket(previousNode);
 };
 
 
@@ -179,7 +195,6 @@ const addProductToBill = async() => {
         
         if(typeof(res) === 'string'){
             var product = JSON.parse(res);
-            console.log(product);
 
             //Si es D significa que es producto a granel
             if(product['TVENTA'] === 'D'){
@@ -198,16 +213,37 @@ const addProductToBill = async() => {
 };
 
 const deleteProductFromBill = () => {
-    alert('Borrar producto!...')
-    console.log(selectedProductRow);
     if(selectedProductRow){
         var row = document.getElementById(selectedProductRow);
         if(row){
+            const prevRow = row.previousSibling;
+            const nextRow = row.nextSibling;
             row.parentNode.removeChild(row);
             delete productsOnBill[selectedProductRow__BDid];
             totalH1.innerText = `Total: ${calculateTotalBill(productsOnBill)}`;
             selectedProductRow = '';
             selectedProductRow__BDid = '';
+
+            console.log(typeof(row.previousSibling));
+            console.log(prevRow);
+            console.log(row);
+
+            if(prevRow){
+                //Al borrar el nodo debemos llenar el espacio vacio en la cadena de nodos
+                try{
+                    focus_row_on_ticket(document.getElementById(prevRow.id));
+                    prevRow.nextSibling = document.getElementById(nextRow.id);
+                }catch (e){
+                    console.log('No, fue aqui mi bro' + e);
+                }
+            }else{
+                try{
+                    focus_row_on_ticket(document.getElementById(nextRow.id));
+                }catch (e){
+                    console.log('Aqui fallo alv' + e);
+                }
+            }
+
         }else{
             console.log('El elemento no existe.')
         }

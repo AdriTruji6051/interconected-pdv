@@ -10,6 +10,9 @@ const show_available_products = (products) =>{
     products.forEach(prod => {
         append_new_finded_product_row(prod);
     });
+
+    const firstRow = findedTable.firstChild;
+    focus_row_on_finded_products(firstRow);
 };
 
 const addFindedProductToBill = () => {
@@ -51,5 +54,16 @@ const append_new_finded_product_row = (product) => {
     `;
 
     findedTable.appendChild(row);
-    
 };
+
+const go_to_next_finded_product = () => {
+    const actualNode = document.getElementById(findedSelectedProductRow);
+    const nextNode = actualNode.nextSibling;
+    focus_row_on_finded_products(nextNode);
+};
+
+const go_to_previous_finded_product = () => {
+    const actualNode = document.getElementById(findedSelectedProductRow);
+    const previousNode = actualNode.previousSibling;
+    focus_row_on_finded_products(previousNode);
+}

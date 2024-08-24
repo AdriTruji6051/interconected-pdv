@@ -21,9 +21,9 @@ def create_ticket_struct(products, change, notes):
         IMPORTE = products[key]['IMPORTE']
         total_local += IMPORTE
 
-        TICKET_TXT += str(CANTIDAD) + ' ' + str(DESCRIPCION) + '    ' + str(IMPORTE) + '#-# -------------------------------'
+        TICKET_TXT += str(CANTIDAD) + ' ' + str(DESCRIPCION) + '    ' + str(IMPORTE) + '#-# '
     
-    TICKET_TXT += str(f'#-##-#Total: {total_local} #-#Cambio: {float(total_local) - float(change)}')
+    TICKET_TXT += str(f'-------------------------------#-##-#Total: {total_local} #-#Cambio: {float(change) - float(total_local)}')
 
     return TICKET_TXT
 

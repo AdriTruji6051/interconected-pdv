@@ -1,1 +1,1 @@
-const SERVERIP = '192.168.100.45'
+const SERVERIP = 'localhost'

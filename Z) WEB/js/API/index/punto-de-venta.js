@@ -90,16 +90,15 @@ inputCantityPRICE.addEventListener('input', function(){
 
 btnCancelGranel.addEventListener('click', function(){
     granelProduct = '';
-    divCantityProduct.hidden = true;
+    inputSearchProduct.focus();
 });
 
 formCantityProduct.addEventListener('submit', function(event){
     event.preventDefault();
+    inputSearchProduct.focus();
     const weight = inputCantityWEIGHT.value;
     apppend_to_bill_table(granelProduct, weight);
     granelProduct = '';
-    divCantityProduct.hidden = true;
-    inputSearchProduct.focus();
 });
 
 divCantityProduct.addEventListener('focusout', function(event){
@@ -136,5 +135,8 @@ ticketSubmitForm.addEventListener('submit', function(event){
     const notes = document.getElementById('notes-for-sell').value;
     submitTicket(productsOnBill, inputChange.value, notes, selectPrinter.value, true);
     ticketSubmitDiv.hidden = true;
+    productsOnBill = null;
+    billTable.innerHTML = '';
+    calculateTotalBill(productsOnBill);
 });
 
