@@ -65,7 +65,7 @@
                     <div id="contro-ticket-panel" class="d-flex flex-row-reverse" style="height: 50px;">
                         <button id="btn-delete-row">Eliminar producto [Supr]</button>
                         <button id="btn-aply-discount">Aplicar Mayoreo [F1]</button>
-                        <button id="test">ABRIR MODAL</button>
+                        <button id="btn-common-article">CTRL + P - Articulo común</button>
                     </div>
                     <div id="product-search" style="height: 50px;">
                         <div id="div-search-product" style="width: 70%;">
@@ -123,7 +123,7 @@
                             <label for="cantity-of-product-weight">Peso (Kg)</label>
                             <input type="number" step="any" id="cantity-of-product-weight" value="1" required>
                             <label for="cantity-of-product-price">Precio:</label>
-                            <input type="number" id="cantity-of-product-price" value="1" required>
+                            <input type="number" step="any" id="cantity-of-product-price" value="1" required>
                             <br>
                             <br>
                             <button type="submit">Confirmar</button>
@@ -150,6 +150,19 @@
                         </div>
                     </div>
                     <!-- Final finded products panel -->
+
+                    <!-- Inicio articulo comun panel -->
+                    <div id="common-article-div" hidden tabindex="0">
+                        <h2>Venta de arcticulo comun</h2>
+                        <form action="submit" id="common-article-form">
+                            <input id="common-article-cantity" type="number" step="any" required>
+                            <input id="common-article-name" type="text" placeholder="Nombre de producto..." required>
+                            <input id="common-article-price" type="number" step="any" placeholder="$">
+                            <button type="submit">Confirmar</button>
+                            <button type="button">Cancelar</button>
+                        </form>
+                    </div>
+                    <!-- Final articulo comun panel -->
                 </div>
                 <!-- Final tools div -->
             </div>

@@ -35,6 +35,7 @@ function focus_row_on_finded_products(row){
         findedSelectedProductRow__BDid = row.name;
         findedSelectedProductRow = row.id;
         document.getElementById(findedSelectedProductRow).classList.add('table-primary');
+        document.getElementById(findedSelectedProductRow).scrollIntoView({ behavior: 'instant' });
     }
 };
 

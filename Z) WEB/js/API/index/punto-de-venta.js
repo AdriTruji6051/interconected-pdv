@@ -11,6 +11,7 @@ const btnAddFindedProduct = document.getElementById('add-finded-product');
 
 const btnDiscount = document.getElementById('btn-aply-discount');
 const btnDeleteRow = document.getElementById('btn-delete-row');
+const btnCommonArticle = document.getElementById('btn-common-article')
 
 const divCantityProduct = document.getElementById('cantity-of-product');
 const formCantityProduct = document.getElementById('form-cantity-of-product');
@@ -23,7 +24,12 @@ const ticketSubmitDiv = document.getElementById('complete-the-ticket-submit');
 const inputChange = document.getElementById('change-for-ticket');
 const ticketSubmitForm = document.getElementById('ticket-change&notes-form');
 
-const test = document.getElementById('test');
+const commonArticleCantity = document.getElementById('common-article-cantity');
+const commonArticleDescription = document.getElementById('common-article-name');
+const commonArticlePrice = document.getElementById('common-article-price');
+const commonArticleForm = document.getElementById('common-article-form');
+const commonArticleDiv = document.getElementById('common-article-div');
+
 
 //Almacenamiento de la cuenta
 var productsOnBill = {};
@@ -133,10 +139,21 @@ inputChange.addEventListener('input', function(){
 ticketSubmitForm.addEventListener('submit', function(event){
     event.preventDefault();
     const notes = document.getElementById('notes-for-sell').value;
-    submitTicket(productsOnBill, inputChange.value, notes, selectPrinter.value, true);
+    submitTicket(productsOnBill, inputChange.value, notes, selectPrinter.value, false);
     ticketSubmitDiv.hidden = true;
     productsOnBill = null;
     billTable.innerHTML = '';
     calculateTotalBill(productsOnBill);
 });
 
+
+btnCommonArticle.addEventListener('click', function(){
+    commonArticleDiv.hidden = false;
+    commonArticleDiv.focus();
+});
+
+commonArticleDiv.addEventListener('focusout', function(event){
+    if(!commonArticleDiv.contains(event.relatedTarget)){
+        commonArticleDiv.hidden = true;
+    }
+});

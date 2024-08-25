@@ -46,12 +46,13 @@ function manageKeyPressed(event){
     var key = event.key;
     if(key === 'Delete'){
         deleteProductFromBill();
-    }else if(key === 'F12'){
-        collectTheBill(event);
     }else if(key === 'Enter' && !findedDiv.hidden){
         addFindedProductToBill();
-
-    //Manejo de las flechas
+    }else if(key === 'F1'){
+        event.preventDefault();
+        undoOrAplyDiscount();
+    }else if(key === 'F12'){
+        collectTheBill(event);
     }else if(key === 'ArrowDown' && !findedDiv.hidden){
         go_to_next_finded_product();
     }else if(key === 'ArrowUp' && !findedDiv.hidden){
@@ -104,7 +105,6 @@ const create_product_row = (product) =>{
     // Añadir la fila a la tabla y dirigirse a ella si no existe
     billTable.appendChild(row);
     focus_row_on_ticket(row);
-    row.scrollIntoView({ behavior: 'smooth' });
 }
 
 const update_product_on_bill = (product, numOfProd) => {
@@ -120,7 +120,7 @@ const update_product_on_bill = (product, numOfProd) => {
         focus_row_on_ticket(document.getElementById(`tr-${product['CODIGO']}`));
     }
 
-    totalH1.innerText = `Total: ${calculateTotalBill(productsOnBill)}`;
+    calculateTotalBill(productsOnBill);
 };
 
 const add_product_to_bill = (product, cantity) => {
@@ -137,7 +137,7 @@ const add_product_to_bill = (product, cantity) => {
 
     create_product_row(productsOnBill[product['CODIGO']]);
 
-    totalH1.innerText = `Total: ${calculateTotalBill(productsOnBill)}`;
+    calculateTotalBill(productsOnBill);
 };
 
 
@@ -151,6 +151,7 @@ function focus_row_on_ticket (row){
     console.log(row.name);
     selectedProductRow = row.id;
     document.getElementById(selectedProductRow).classList.add('table-primary');
+    document.getElementById(selectedProductRow).scrollIntoView({ behavior: 'instant' });
 };
 
 const go_to_next_product = () => {

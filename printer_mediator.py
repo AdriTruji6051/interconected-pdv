@@ -12,7 +12,8 @@ def list_printers() -> list:
 
 def create_ticket_struct(products, change, notes):
     total_local = 0
-    TICKET_TXT = notes + '#-##-# -------------------------------'
+    if type(notes) != bool: TICKET_TXT = notes + '#-##-# -------------------------------'
+    else: TICKET_TXT = '#-##-# -------------------------------'
 
     for key in products:
         DESCRIPCION = products[key]['DESCRIPCION']
@@ -23,7 +24,7 @@ def create_ticket_struct(products, change, notes):
 
         TICKET_TXT += str(CANTIDAD) + ' ' + str(DESCRIPCION) + '    ' + str(IMPORTE) + '#-# '
     
-    TICKET_TXT += str(f'-------------------------------#-##-#Total: {total_local} #-#Cambio: {float(change) - float(total_local)}')
+    TICKET_TXT += str(f'-------------------------------#-##-#Total: {total_local} {'#-#Cambio:' + str(float(change) - float(total_local)) if change else ''}')
 
     return TICKET_TXT
 
