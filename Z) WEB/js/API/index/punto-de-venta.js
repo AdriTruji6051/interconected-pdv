@@ -2,7 +2,7 @@ const btnSearchProduct = document.getElementById('btn-search-product');
 const inputSearchProduct = document.getElementById('input-search-product')
 const billTable = document.getElementById('bill-table-body');
 const totalH1 = document.getElementById('total');
-const submitBill = document.getElementById('submit-bill');
+const submitBillBtn = document.getElementById('submit-bill');
 const selectPrinter = document.getElementById('select-printer');
 
 const findedTable = document.getElementById('finded-products-table-body');
@@ -74,15 +74,7 @@ document.addEventListener('keydown', manageKeyPressed);
 
 btnSearchProduct.addEventListener('click', addProductToBill);
 
-submitBill.addEventListener('click', function(event){
-    ticketSubmitDiv.hidden = false;
-    ticketSubmitDiv.focus();
-    const total = calculateTotalBill(productsOnBill); 
-    inputChange.value = total;
-    document.getElementById('complete-ticket-bill').innerText = `Cobrar: $ ${total}`;
-    document.getElementById('cantity-of-change').innerText = '$ 0.00';
-
-});
+submitBillBtn.addEventListener('click', submit_Bill);
 
 inputCantityWEIGHT.addEventListener('input', function(){
     const PVENTA = granelProduct.PVENTA;
@@ -136,21 +128,9 @@ inputChange.addEventListener('input', function(){
     document.getElementById('cantity-of-change').innerText =  total < 0 ? 'No alcanza!...' :  `$ ${total}`;
 });
 
-ticketSubmitForm.addEventListener('submit', function(event){
-    event.preventDefault();
-    const notes = document.getElementById('notes-for-sell').value;
-    submitTicket(productsOnBill, inputChange.value, notes, selectPrinter.value, false);
-    ticketSubmitDiv.hidden = true;
-    productsOnBill = null;
-    billTable.innerHTML = '';
-    calculateTotalBill(productsOnBill);
-});
+ticketSubmitForm.addEventListener('submit', collectTheBill);
 
-
-btnCommonArticle.addEventListener('click', function(){
-    commonArticleDiv.hidden = false;
-    commonArticleDiv.focus();
-});
+btnCommonArticle.addEventListener('click', commonProduct);
 
 commonArticleDiv.addEventListener('focusout', function(event){
     if(!commonArticleDiv.contains(event.relatedTarget)){

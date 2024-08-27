@@ -48,11 +48,15 @@ function manageKeyPressed(event){
         deleteProductFromBill();
     }else if(key === 'Enter' && !findedDiv.hidden){
         addFindedProductToBill();
-    }else if(key === 'F1'){
+    }else if(event.ctrlKey && key === 'p'){
+        event.preventDefault();
+        commonProduct();
+    }else if(key === 'F11'){
         event.preventDefault();
         undoOrAplyDiscount();
     }else if(key === 'F12'){
-        collectTheBill(event);
+        event.preventDefault();
+        submit_Bill();
     }else if(key === 'ArrowDown' && !findedDiv.hidden){
         go_to_next_finded_product();
     }else if(key === 'ArrowUp' && !findedDiv.hidden){
@@ -143,12 +147,10 @@ const add_product_to_bill = (product, cantity) => {
 
 
 function focus_row_on_ticket (row){
-    console.log(row);
     if(document.getElementById(selectedProductRow)){
         document.getElementById(selectedProductRow).classList.remove('table-primary');
     }
     selectedProductRow__BDid = row.name;
-    console.log(row.name);
     selectedProductRow = row.id;
     document.getElementById(selectedProductRow).classList.add('table-primary');
     document.getElementById(selectedProductRow).scrollIntoView({ behavior: 'instant' });
@@ -157,25 +159,22 @@ function focus_row_on_ticket (row){
 const go_to_next_product = () => {
     const actualNode = document.getElementById(selectedProductRow);
     const nextNode = actualNode.nextSibling;
-    focus_row_on_ticket(nextNode);
+
+    if(nextNode != undefined){
+        focus_row_on_ticket(nextNode);
+    }
+    
 };
 
 const go_to_previous_product = () => {
     const actualNode = document.getElementById(selectedProductRow);
     const previousNode = actualNode.previousSibling;
-    focus_row_on_ticket(previousNode);
-};
-
-
-const apppend_to_bill_table = (product, cantity) => {
-    if(productsOnBill.hasOwnProperty(product['CODIGO'])) {
-        console.log(product);
-        update_product_on_bill(product, cantity);
-    } else {
-        add_product_to_bill(product, cantity);
+    //Comprobamos si es un nodo de tipo texto, lo que significa que esta fuera del limite
+    if(previousNode.nodeType !== 3){
+        focus_row_on_ticket(previousNode);
     }
-    inputSearchProduct.focus();
 };
+
 
 const venta_a_granel = (product) => {
     divCantityProduct.hidden = false;
@@ -190,27 +189,32 @@ const venta_a_granel = (product) => {
 };
 
 const addProductToBill = async() => {
-    if(inputSearchProduct.value){
-        var res = await getProduct(inputSearchProduct.value);
-        inputSearchProduct.value = '';
-        
-        if(typeof(res) === 'string'){
-            var product = JSON.parse(res);
+    const input = inputSearchProduct.value;
+    inputSearchProduct.value = '';
 
-            //Si es D significa que es producto a granel
-            if(product['TVENTA'] === 'D'){
-                venta_a_granel(product);
-            }else{
-                apppend_to_bill_table(product, 1);
-            }
-
+    if(input){
+        //Si existe el producto ya en la cuenta, agregamos uno mas
+        if(productsOnBill.hasOwnProperty(productsOnBill[input]['CODIGO'])){
+            update_product_on_bill(productsOnBill[input], 1);
         }else{
-            show_available_products(res);
+            //Si no existe, lo buscamos en la BD y lo actualizamos
+            const res = await getProduct(input);
+            if(typeof(res) === 'string'){
+                const product = JSON.parse(res);
+    
+                //Si es D significa que es producto a granel
+                if(product['TVENTA'] === 'D'){
+                    venta_a_granel(product);
+                }else{
+                    add_product_to_bill(product, 1);
+                    inputSearchProduct.focus();
+                }
+    
+            }else{
+                show_available_products(res);
+            }
         }
-    }else{
-        console.log('NO SE ENCONTRARO PRODUCTOS CON DICHA DESCRIPCION!...');
     }
-
 };
 
 const deleteProductFromBill = () => {
@@ -251,16 +255,6 @@ const deleteProductFromBill = () => {
     }
 };
 
-const collectTheBill = async (event) => {
-    event.preventDefault();
-
-    if(Object.keys(productsOnBill).length !== 0){
-        submitTicket(bill = productsOnBill,printerName = selectPrinter.value, willPrint = true);
-    }else{
-        alert('Cuenta vacia!...')
-    }
-};
-
 function selectRowOnTicket(event){
     const row = event.target.parentNode;
     focus_row_on_ticket(row);
@@ -275,3 +269,34 @@ const undoOrAplyDiscount = () =>{
     for(let key in productsOnBill) update_product_on_bill(productsOnBill[key], 0);
     
 };
+
+//Venta de producto comun --------------------------------------
+function commonProduct(){
+    commonArticleDiv.hidden = false;
+    commonArticleCantity.focus();
+}
+
+//Manejo de la cuenta al cobrar---------------------------------
+function submit_Bill(){
+    ticketSubmitDiv.hidden = false;
+    inputChange.focus();
+    const total = calculateTotalBill(productsOnBill); 
+    inputChange.value = total;
+    document.getElementById('complete-ticket-bill').innerText = `Cobrar: $ ${total}`;
+    document.getElementById('cantity-of-change').innerText = '$ 0.00';
+}
+
+function collectTheBill(){
+    if(Object.keys(productsOnBill).length !== 0){
+        const notes = document.getElementById('notes-for-sell').value;
+        submitTicket(productsOnBill, inputChange.value, notes, selectPrinter.value, false);
+        ticketSubmitDiv.hidden = true;
+        productsOnBill = null;
+        billTable.innerHTML = '';
+        calculateTotalBill(productsOnBill);
+        alert('Cobro realizado!...');
+    }else{
+        alert('Cuenta vacia!...');
+    }
+
+}
