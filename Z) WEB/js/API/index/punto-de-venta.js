@@ -1,5 +1,6 @@
 const btnSearchProduct = document.getElementById('btn-search-product');
 const inputSearchProduct = document.getElementById('input-search-product')
+
 const billTable = document.getElementById('bill-table-body');
 const totalH1 = document.getElementById('total');
 const submitBillBtn = document.getElementById('submit-bill');
@@ -43,26 +44,13 @@ var selectedProductRow__BDid = '';
 var findedSelectedProductRow = '';
 var findedSelectedProductRow__BDid = '';
 
-//Codigo de producto a granel
+//Objeto de producto a granel
 var granelProduct = '';
 
+//ID objeto comun
+var IDcommonPr = 0;
+
 window.onload =  onLoadFunction();
-
-//Para tabla de ticket
-billTable.addEventListener('click', function(event){
-    selectRowOnTicket(event);
-});
-
-//Para tabla de busquedas
-findedTable.addEventListener('click', function(event){
-    selectRowOnFindedProducts(event);
-});
-
-inputSearchProduct.addEventListener('keypress', function(event){
-    if(event.key === 'Enter'){
-        addProductToBill();
-    }
-});
 
 btnDiscount.addEventListener('click', undoOrAplyDiscount);
 
@@ -72,33 +60,33 @@ btnAddFindedProduct.addEventListener('click', addFindedProductToBill);
 
 document.addEventListener('keydown', manageKeyPressed);
 
-btnSearchProduct.addEventListener('click', addProductToBill);
+btnSearchProduct.addEventListener('click', searchProduct);
 
 submitBillBtn.addEventListener('click', submit_Bill);
 
+ticketSubmitForm.addEventListener('submit', collectTheBill);
+
+btnCommonArticle.addEventListener('click', commonProduct);
+
+formCantityProduct.addEventListener('submit', addGranelProduct);
+
+//Inputs dinamicos felicida
 inputCantityWEIGHT.addEventListener('input', function(){
     const PVENTA = granelProduct.PVENTA;
     inputCantityPRICE.value = inputCantityWEIGHT.value * PVENTA;
-})
+});
 
 inputCantityPRICE.addEventListener('input', function(){
     const PVENTA = granelProduct.PVENTA;
     inputCantityWEIGHT.value = inputCantityPRICE.value / PVENTA;
-})
-
-btnCancelGranel.addEventListener('click', function(){
-    granelProduct = '';
-    inputSearchProduct.focus();
 });
 
-formCantityProduct.addEventListener('submit', function(event){
-    event.preventDefault();
-    inputSearchProduct.focus();
-    const weight = inputCantityWEIGHT.value;
-    apppend_to_bill_table(granelProduct, weight);
-    granelProduct = '';
+inputChange.addEventListener('input', function(){
+    const total = inputChange.value - calculateTotalBill(productsOnBill);
+    document.getElementById('cantity-of-change').innerText =  total < 0 ? 'No alcanza!...' :  `$ ${total}`;
 });
 
+//Si pierden el foco se cierran
 divCantityProduct.addEventListener('focusout', function(event){
     if(!divCantityProduct.contains(event.relatedTarget)){
         divCantityProduct.hidden = true;
@@ -112,28 +100,63 @@ findedDiv.addEventListener('focusout', function(event){
     }
 });
 
+commonArticleDiv.addEventListener('focusout', function(event){
+    if(!commonArticleDiv.contains(event.relatedTarget)){
+        commonArticleDiv.hidden = true;
+    }
+});
+
 ticketSubmitDiv.addEventListener('focusout', function(event){
     if(!ticketSubmitDiv.contains(event.relatedTarget)){
         ticketSubmitDiv.hidden = true;
     }
 });
 
+//Hacer que pierdan el foco para que se cierren
+btnCancelGranel.addEventListener('click', function(){
+    granelProduct = '';
+    inputSearchProduct.focus();
+});
+
+//Para tabla de ticket
+billTable.addEventListener('click', function(event){
+    selectRowOnTicket(event);
+});
+
+//Para tabla de busquedas
+findedTable.addEventListener('click', function(event){
+    selectRowOnFindedProducts(event);
+});
+
+inputSearchProduct.addEventListener('keypress', function(event){
+    if(event.key === 'Enter'){
+        searchProduct();
+    }
+});
+
+//Para cobranza
 document.getElementById('show-notes').addEventListener('click', function(){
     document.getElementById('notes-for-sell').hidden = false;
 });
 
-
-inputChange.addEventListener('input', function(){
-    const total = inputChange.value - calculateTotalBill(productsOnBill);
-    document.getElementById('cantity-of-change').innerText =  total < 0 ? 'No alcanza!...' :  `$ ${total}`;
-});
-
-ticketSubmitForm.addEventListener('submit', collectTheBill);
-
-btnCommonArticle.addEventListener('click', commonProduct);
-
-commonArticleDiv.addEventListener('focusout', function(event){
-    if(!commonArticleDiv.contains(event.relatedTarget)){
-        commonArticleDiv.hidden = true;
+//CHAMBEANDO AQUI **********************************
+commonArticleForm.addEventListener('submit', function(event){
+    event.preventDefault();
+    product = {
+        CODIGO: `COMM-${IDcommonPr}`,
+        DESCRIPCION: commonArticleDescription.value,
+        PVENTA: commonArticlePrice.value,
+        MAYOREO: commonArticlePrice.value,
+        PCOSTO: commonArticlePrice.value * .9,
+        TVENTA: "U",
     }
+
+    const cantity = commonArticleCantity.value;
+    add_product_to_bill(product, cantity);
+    
+    IDcommonPr = IDcommonPr + 1;
+
+    commonArticleCantity.value = 0;
+    commonArticleDescription.value = '';
+    commonArticlePrice.value = 0;
 });

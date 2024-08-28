@@ -19,7 +19,7 @@ const addFindedProductToBill = () => {
     inputSearchProduct.value = '';
     inputSearchProduct.value = findedSelectedProductRow__BDid
     findedDiv.hidden = true;
-    addProductToBill();
+    searchProduct();
     reset_finded_product_var();
 };
 
