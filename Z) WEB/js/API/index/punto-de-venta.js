@@ -31,6 +31,7 @@ const commonArticleDescription = document.getElementById('common-article-name');
 const commonArticlePrice = document.getElementById('common-article-price');
 const commonArticleForm = document.getElementById('common-article-form');
 
+const btnFullscreen = document.getElementById('btn-fullscren');
 
 
 //Almacenamiento de la cuenta
@@ -70,6 +71,8 @@ ticketSubmitForm.addEventListener('submit', collectTheBill);
 btnCommonArticle.addEventListener('click', commonProduct);
 
 formCantityProduct.addEventListener('submit', addGranelProduct);
+
+btnFullscreen.addEventListener('click', fullScreenRequest);
 
 //Inputs dinamicos felicida
 inputCantityWEIGHT.addEventListener('input', function(){
@@ -147,12 +150,13 @@ document.getElementById('show-notes').addEventListener('click', function(){
 //CHAMBEANDO AQUI **********************************
 commonArticleForm.addEventListener('submit', function(event){
     event.preventDefault();
+    const price = parseFloat(commonArticlePrice.value);
     product = {
         CODIGO: `COMM-${IDcommonPr}`,
         DESCRIPCION: commonArticleDescription.value,
-        PVENTA: commonArticlePrice.value,
-        MAYOREO: commonArticlePrice.value,
-        PCOSTO: commonArticlePrice.value * .9,
+        PVENTA: price,
+        MAYOREO: price,
+        PCOSTO: price * .9,
         TVENTA: "U",
     }
 
@@ -161,9 +165,9 @@ commonArticleForm.addEventListener('submit', function(event){
     
     IDcommonPr = IDcommonPr + 1;
 
-    commonArticleCantity.value = 0;
+    commonArticleCantity.value = null;
     commonArticleDescription.value = '';
-    commonArticlePrice.value = 0;
+    commonArticlePrice.value = null;
 
     inputSearchProduct.focus();
 });

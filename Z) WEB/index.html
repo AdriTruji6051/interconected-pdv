@@ -40,7 +40,7 @@
                 </li>
                 -->
                 <li class="nav-item mx-2">
-                    <button class="btn margin-right btn-primary-color">No hago nada :)</button>
+                    <button class="btn margin-right btn-primary-color" id="btn-fullscren">[ ]</button>
                 </li> 
                 <li class="nav-item">
                     <select id="select-printer" class="form-select" aria-label="Default select example">
@@ -117,17 +117,22 @@
                     <!-- Final ticket preview -->
 
                     <!-- Inicio cantidad a granel -->
-                    <div id="cantity-of-product" tabindex="0" hidden>
+                    <div id="cantity-of-product" class="mb-3" tabindex="0" hidden>
                         <h2 id="granel-title">Producto: </h2>
                         <form action="submit" id="form-cantity-of-product">
-                            <label for="cantity-of-product-weight">Peso (Kg)</label>
-                            <input type="number" step="any" id="cantity-of-product-weight" value="1" required>
-                            <label for="cantity-of-product-price">Precio:</label>
-                            <input type="number" step="any" id="cantity-of-product-price" value="1" required>
-                            <br>
-                            <br>
-                            <button type="submit">Confirmar</button>
-                            <button type="button" id="btn-cancel-granel">Cancelar</button>
+
+                            <div class="input-group mb-3">
+                                <span class="input-group-text">Peso (Kg)</span>
+                                <input type="number" class="form-control" step="any" id="cantity-of-product-weight" value="1" required>
+                            </div>
+
+                            <div class="input-group mb-3">
+                                <span class="input-group-text">Precio:</span>
+                                <input type="number" class="form-control" step="any" id="cantity-of-product-price" value="1" required>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary-color">Confirmar</button>
+                            <button type="button" id="btn-cancel-granel" class="btn btn-outline-color">Cancelar</button>
                         </form>
                     </div>
                     <!-- Final cantidad a granel -->
@@ -146,7 +151,7 @@
                             </table>
                         </div>
                         <div id="control-finded-panel">
-                            <button id="add-finded-product" class="btn btn-primary">Agregar producto</button>
+                            <button id="add-finded-product" class="btn btn-primary-color">Agregar producto</button>
                         </div>
                     </div>
                     <!-- Final finded products panel -->
@@ -155,11 +160,23 @@
                     <div id="common-article-div" hidden tabindex="0">
                         <h2>Venta de arcticulo comun</h2>
                         <form action="submit" id="common-article-form">
-                            <input id="common-article-cantity" type="number" step="any" required>
-                            <input id="common-article-name" type="text" placeholder="Nombre de producto..." required>
-                            <input id="common-article-price" type="number" step="any" placeholder="$">
-                            <button type="submit">Confirmar</button>
-                            <button type="button">Cancelar</button>
+                            <div class="input-group mb-3">
+                                <span class="input-group-text">Cantidad:</span>
+                                <input id="common-article-cantity" class="form-control" type="number" step="any" required>
+                            </div>
+                            
+                            <div class="input-group mb-3">
+                                <span class="input-group-text">Nombre:</span>
+                                <input id="common-article-name" class="form-control" type="text" placeholder="Nombre de producto..." required>
+                            </div>
+                            
+                            <div class="input-group mb-3">
+                                <span class="input-group-text">$</span>
+                                <input id="common-article-price" class="form-control" type="number" step="any" placeholder="$" required>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary-color">Confirmar</button>
+                            <button type="button" class="btn btn-outline-color">Cancelar</button>
                         </form>
                     </div>
                     <!-- Final articulo comun panel -->

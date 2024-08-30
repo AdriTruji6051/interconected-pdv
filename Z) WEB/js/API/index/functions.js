@@ -40,10 +40,12 @@ function manageKeyPressed(event){
     }else if(key.length ===1 && regex.test(key) && !isToolEnabled()){
         event.preventDefault();
         inputSearchProduct.value += key;
+        inputSearchProduct.focus();
     }
 };
 
 async function onLoadFunction(){
+    fullScreenRequest();
     //Focus a introducir productos
     inputSearchProduct.focus()
 
@@ -252,4 +254,40 @@ function isToolEnabled(){
     });
 
     return isEnabled;
+}
+
+//Fullscreen options
+var isFullScreen = true;
+const fullScreenRequest = () =>{
+    if(isFullScreen) salirDePantallaCompleta();
+    else ponerEnPantallaCompleta();
+    isFullScreen = !isFullScreen;
+};
+
+function ponerEnPantallaCompleta() {
+    // Selecciona el elemento que quieres poner en pantalla completa
+    const elemento = document.documentElement; // Todo el documento
+
+    if (elemento.requestFullscreen) {
+        elemento.requestFullscreen();
+    } else if (elemento.mozRequestFullScreen) { // Firefox
+        elemento.mozRequestFullScreen();
+    } else if (elemento.webkitRequestFullscreen) { // Chrome, Safari, Opera
+        elemento.webkitRequestFullscreen();
+    } else if (elemento.msRequestFullscreen) { // IE/Edge
+        elemento.msRequestFullscreen();
+    }
+}
+
+// Para salir de la pantalla completa
+function salirDePantallaCompleta() {
+    if (document.exitFullscreen) {
+        document.exitFullscreen();
+    } else if (document.mozCancelFullScreen) { // Firefox
+        document.mozCancelFullScreen();
+    } else if (document.webkitExitFullscreen) { // Chrome, Safari, Opera
+        document.webkitExitFullscreen();
+    } else if (document.msExitFullscreen) { // IE/Edge
+        document.msExitFullscreen();
+    }
 }
