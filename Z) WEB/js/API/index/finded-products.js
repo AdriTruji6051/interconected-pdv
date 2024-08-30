@@ -24,18 +24,20 @@ const addFindedProductToBill = () => {
 };
 
 function focus_row_on_finded_products(row){
-    if(row.classList.contains('table-primary')){
-        row.classList.remove('table-primary');
-        findedSelectedProductRow__BDid = '';
-        findedSelectedProductRow = '';
-    }else{
-        if(document.getElementById(findedSelectedProductRow)){
-            document.getElementById(findedSelectedProductRow).classList.remove('table-primary');
+    if(row){
+        if(row.classList.contains('table-primary')){
+            row.classList.remove('table-primary');
+            findedSelectedProductRow__BDid = '';
+            findedSelectedProductRow = '';
+        }else{
+            if(document.getElementById(findedSelectedProductRow)){
+                document.getElementById(findedSelectedProductRow).classList.remove('table-primary');
+            }
+            findedSelectedProductRow__BDid = row.name;
+            findedSelectedProductRow = row.id;
+            document.getElementById(findedSelectedProductRow).classList.add('table-primary');
+            document.getElementById(findedSelectedProductRow).scrollIntoView({ behavior: 'instant' });
         }
-        findedSelectedProductRow__BDid = row.name;
-        findedSelectedProductRow = row.id;
-        document.getElementById(findedSelectedProductRow).classList.add('table-primary');
-        document.getElementById(findedSelectedProductRow).scrollIntoView({ behavior: 'instant' });
     }
 };
 

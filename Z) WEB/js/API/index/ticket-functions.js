@@ -1,7 +1,13 @@
 function calculateTotalBill(productsToCalculate){
     var totalBill = 0;
     for(var prod_cd in productsToCalculate){
-        totalBill += productsToCalculate[prod_cd].IMPORTE;
+        if(productsToCalculate[prod_cd].IMPORTE > 0){
+            totalBill += productsToCalculate[prod_cd].IMPORTE;
+        }else{
+            selectedProductRow = `tr-${prod_cd}`;
+            selectedProductRow__BDid = prod_cd;
+            deleteProductFromBill();
+        }
     }
 
     totalH1.innerText = `Total: ${totalBill}`;
@@ -18,7 +24,7 @@ const create_product_row = (product) =>{
     row.innerHTML = `
         <td id='cod-${product['CODIGO']}'>${product['CODIGO']}</td>
         <td id='des-${product['CODIGO']}'>${product['DESCRIPCION']}</td>
-        <td id='pv-${product['CODIGO']}'>${product['PVENTA']}</td>
+        <td id='pv-${product['CODIGO']}'>${hasDiscount ? product.MAYOREO : product.PVENTA}</td>
         <td id='can-${product['CODIGO']}'>${product['CANTIDAD']}</td>
         <td id='imp-${product['CODIGO']}'>${product['IMPORTE']}</td>
     `;
@@ -26,6 +32,35 @@ const create_product_row = (product) =>{
     // Añadir la fila a la tabla y dirigirse a ella si no existe
     billTable.appendChild(row);
     focus_row_on_ticket(row);
+}
+
+function update_product_row(product){
+    document.getElementById(`can-${product.CODIGO}`).innerText = product.CANTIDAD;
+    document.getElementById(`imp-${product.CODIGO}`).innerText = product.IMPORTE;
+    document.getElementById(`pv-${product.CODIGO}`).innerText = hasDiscount ? product.MAYOREO : product.PVENTA;
+
+    document.getElementById(`tr-${product.CODIGO}`).scrollIntoView({ behavior: 'smooth' });
+    focus_row_on_ticket(document.getElementById(`tr-${product.CODIGO}`));
+}
+
+function delete_product_row(row){
+    const prevRow = row.previousSibling;
+    const nextRow = row.nextSibling;
+    row.parentNode.removeChild(row);
+    
+    selectedProductRow = '';
+    selectedProductRow__BDid = '';
+    if(prevRow && prevRow.nodeType !== 3){
+        //Al borrar el nodo debemos llenar el espacio vacio en la cadena de nodos
+        try{
+            focus_row_on_ticket(document.getElementById(prevRow.id));
+            prevRow.nextSibling = document.getElementById(nextRow.id);
+        }catch (e){}
+    }else{
+        try{
+            focus_row_on_ticket(document.getElementById(nextRow.id));
+        }catch (e){}
+    }
 }
 
 function focus_row_on_ticket (row){
@@ -65,26 +100,10 @@ const deleteProductFromBill = () => {
     if(selectedProductRow){
         var row = document.getElementById(selectedProductRow);
         if(row){
-            const prevRow = row.previousSibling;
-            const nextRow = row.nextSibling;
-            row.parentNode.removeChild(row);
-            delete productsOnBill[selectedProductRow__BDid];
-            totalH1.innerText = `Total: ${calculateTotalBill(productsOnBill)}`;
-            selectedProductRow = '';
-            selectedProductRow__BDid = '';
-
-            if(prevRow){
-                //Al borrar el nodo debemos llenar el espacio vacio en la cadena de nodos
-                try{
-                    focus_row_on_ticket(document.getElementById(prevRow.id));
-                    prevRow.nextSibling = document.getElementById(nextRow.id);
-                }catch (e){}
-            }else{
-                try{
-                    focus_row_on_ticket(document.getElementById(nextRow.id));
-                }catch (e){}
-            }
-
+            const deleteKey = selectedProductRow__BDid;
+            delete_product_row(row);
+            delete productsOnBill[deleteKey];
+            calculateTotalBill(productsOnBill);
         }
     }
 };

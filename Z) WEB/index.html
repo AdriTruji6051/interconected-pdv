@@ -9,7 +9,7 @@
 </head>
 <body>
     <!-- Inicio navbar -->
-    <nav class="navbar bg-body-tertiary navbar-expand-lg fixed-top" id="navbar">
+    <nav class="navbar bg-body-tertiary navbar-expand-lg fixed-top holis" id="navbar">
         <div class="container-fluid" style="height: 50px;">
             <a class="navbar-brand legend" href="#">
             <img src="./img/LOGO_DULCERÍA_COLOR.png" alt="Logo de la Dulceria MyA" class="img-fluid" />
@@ -40,7 +40,7 @@
                 </li>
                 -->
                 <li class="nav-item mx-2">
-                    <button class="btn btn-primary margin-right btn-primary-color">No hago nada :)</button>
+                    <button class="btn margin-right btn-primary-color">No hago nada :)</button>
                 </li> 
                 <li class="nav-item">
                     <select id="select-printer" class="form-select" aria-label="Default select example">
@@ -62,15 +62,15 @@
                 <!-- Inicio contenedor tickets -->
                 <div id="ticket" class="col-xl-8 col-lg-8 col-sm-12 col-12 d-flex flex-column container-fluid">
                     <!-- Inicio control y busqueda panel -->
-                    <div id="contro-ticket-panel" class="d-flex flex-row-reverse" style="height: 50px;">
-                        <button id="btn-delete-row">Eliminar producto [Supr]</button>
-                        <button id="btn-aply-discount">Aplicar Mayoreo [F11]</button>
-                        <button id="btn-common-article">CTRL + P - Articulo común</button>
+                    <div id="contro-ticket-panel" class="d-flex flex-row-reverse gap-3 p-1" style="height: 50px;">
+                        <button id="btn-delete-row" class="btn btn-warning-color">Eliminar producto [Supr] <i class="fa-solid fa-trash"></i></button>
+                        <button id="btn-aply-discount" class="btn btn-outline-color">Aplicar Mayoreo [F11] <i class="fa-solid fa-tag"></i></button>
+                        <button id="btn-common-article" class="btn btn-outline-color">CTRL + P - Articulo común </button>
                     </div>
                     <div id="product-search" style="height: 50px;">
-                        <div id="div-search-product" style="width: 70%;">
-                            <input type="text" id="input-search-product" placeholder="Escriba el código o nombre del producto" autocomplete="off">
-                            <button id="btn-search-product">Buscar</button>
+                        <div id="div-search-product" class="d-flex flex-row gap-3 p-1">
+                            <input type="text" id="input-search-product" class="form-control" placeholder="Escriba el código o nombre del producto" autocomplete="off" style="width: 70%;">
+                            <button id="btn-search-product" class="btn btn-primary btn-primary-color">Buscar <i class="fa-solid fa-magnifying-glass"></i></button>
                         </div>
                     </div>
                     <!-- Final control y busqueda panel -->
@@ -92,16 +92,16 @@
                     </div>
 
                     <!-- Inicio info bar -->
-                    <div id="info-bar" class="container-fluid">
-                        <h1 id="total">Total: 0.00</h1>
-                        <button id="submit-bill">F12 - Cobrar </button>
+                    <div id="info-bar" class="container-fluid d-flex flex-row-reverse gap-5 p-3 border border-1">
+                        <h1 id="total" class="display-3 p-3">Total: 0.00</h1>
+                        <button id="submit-bill" class="btn btn-primary btn-primary-color"><i class="fa-solid fa-cart-shopping"></i> F12 - Cobrar </button>
                     </div>
                     <!-- Final info bar -->
                 </div>
                 <!-- Final div tickets -->
 
                 <!-- Inicio de tools -->
-                <div id="tools" class="col-xl-4 col-lg-4 col-sm-12 col-12">
+                <div id="tools" class="col-xl-4 col-lg-4 col-sm-12 col-12 border border-1">
 
                     <!-- Inicio ticket preview BEFORE cobrar -->
                     <div id="complete-the-ticket-submit" tabindex="0" hidden>
@@ -176,5 +176,6 @@
     <script src="js/API/index/functions.js"></script>
     <script src="js/API/index/punto-de-venta.js"></script>
     <script src="js/bootsrap/bootstrap.bundle.min.js"></script>
+    <script src="https://kit.fontawesome.com/66cd4be8be.js" crossorigin="anonymous"></script>
 </body>
 </html>

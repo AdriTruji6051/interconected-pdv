@@ -1,14 +1,18 @@
 :root{
-    --main-button-color: red;
-    --main-button-hover-color: blue;
-    --main-button-hover-color: yellow;
+    --main-button-color: #8b5af8;
+    --main-button-hover-color: #7c37f0;
     --ticket-bck-color: white;
     --tools-bck-color: white;
     --bill-bck-color: red;
-    --info-bar-back-color: white;
+    --info-bar-back-color: #ede9fe;
     --product-search-bck-color: yellow;
     --ticket-print-prev-bck-color: white;
     --finded-prodcuts-bck-color: white;
+
+    --navbar-bcl-color: #ddd5ff;
+    --light-text-color: #f5f3ff;
+    --warning-btn-color: #4d1b97;
+    --warning-btn-color-hover: #2e0f66;
 }
 
 .legend img {
@@ -20,8 +24,45 @@
     text-decoration: none;
 }
 
+.btn-primary-color{
+    background-color: var(--main-button-color);
+    color: var(--light-text-color);
+    font-weight: 500;
+}
+
+.btn-primary-color:hover{
+    background-color: var(--main-button-hover-color);
+    color: var(--light-text-color);
+    font-weight: 500;
+}
+
+.btn-outline-color{
+    border: 1px solid var(--main-button-color);
+    color: var(--main-button-color);
+    font-weight: 500;
+}
+
+.btn-outline-color:hover{
+    background-color: var(--main-button-hover-color);
+    color: var(--light-text-color);
+    font-weight: 500;
+}
+
+.btn-warning-color{
+    border: 1px solid var(--warning-btn-color);
+    color: var(--warning-btn-color);
+    font-weight: 500;
+}
+
+.btn-warning-color:hover{
+    background-color: var(--warning-btn-color-hover);
+    color: var(--light-text-color);
+    font-weight: 500;
+}
+
 #navbar{
     max-height: 50px;
+    background: var(--navbar-bcl-color) !important;
 }
 
 #main-container{
@@ -64,7 +105,6 @@
 }
 
 #product-search{
-    border: 2px solid black;
     height: 10%;
 }
 
@@ -74,7 +114,6 @@
 }
 
 #bill{
-    border: 2px solid black;
     height: 73%;
     overflow-y: auto;
 }

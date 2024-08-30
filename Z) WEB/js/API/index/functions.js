@@ -1,12 +1,14 @@
 //JS para las funciones llamadas desde el archivo principal 'punto-de-venta'
 function manageKeyPressed(event){
-    //console.log('Hey:', event.key);
-
+    const regex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ0-9¡!¿?.,:;()@#$%^&*_~\[\]\{\} ]*$/;
     var key = event.key;
+
     if(key === 'Delete'){
         deleteProductFromBill();
     }else if(key === 'Enter' && !findedDiv.hidden){
         addFindedProductToBill();
+    }else if(key === 'Enter' && !isToolEnabled()){
+        searchProduct();
     }else if(event.ctrlKey && key === 'p'){
         event.preventDefault();
         commonProduct();
@@ -16,14 +18,28 @@ function manageKeyPressed(event){
     }else if(key === 'F12'){
         event.preventDefault();
         submit_Bill();
-    }else if(key === 'ArrowDown' && !findedDiv.hidden){
+    }else if(key === 'F10'){
+        event.preventDefault();
+        inputSearchProduct.focus();
+    }else if(key === 'F5'){
+        event.preventDefault();
+    }else if(key === 'ArrowDown' && isToolEnabled()){
         go_to_next_finded_product();
-    }else if(key === 'ArrowUp' && !findedDiv.hidden){
+    }else if(key === 'ArrowUp' && isToolEnabled()){
         go_to_previous_finded_product();
     }else if(key === 'ArrowDown' && findedDiv.hidden){
         go_to_next_product();
     }else if(key === 'ArrowUp' && findedDiv.hidden){
         go_to_previous_product();
+    }else if(key === '+' && !isToolEnabled()){
+        event.preventDefault();
+        update_product_on_bill(productsOnBill[selectedProductRow__BDid], 1);
+    }else if(key === '-' && !isToolEnabled()){
+        event.preventDefault();
+        update_product_on_bill(productsOnBill[selectedProductRow__BDid], -1);
+    }else if(key.length ===1 && regex.test(key) && !isToolEnabled()){
+        event.preventDefault();
+        inputSearchProduct.value += key;
     }
 };
 
@@ -50,46 +66,62 @@ async function onLoadFunction(){
     .catch(error => console.log(error));
 };
 
-//Manejo de la cuenta 
 const update_product_on_bill = (product, numOfProd) => {
-    const prOnBill = productsOnBill[product['CODIGO']];
-    prOnBill.CANTIDAD = parseFloat(prOnBill.CANTIDAD) + parseFloat(numOfProd);
-    prOnBill.IMPORTE = hasDiscount ? prOnBill.CANTIDAD * prOnBill.MAYOREO : prOnBill.CANTIDAD * prOnBill.PVENTA;
-
-    document.getElementById(`can-${product['CODIGO']}`).innerText = prOnBill.CANTIDAD;
-    document.getElementById(`imp-${product['CODIGO']}`).innerText = prOnBill.IMPORTE;
-    document.getElementById(`tr-${product['CODIGO']}`).scrollIntoView({ behavior: 'smooth' });
-
-    if(numOfProd > 0) focus_row_on_ticket(document.getElementById(`tr-${product['CODIGO']}`));
-
-    calculateTotalBill(productsOnBill);
-
+    //Si llega un cero se hace un refresh
+    if(numOfProd > 0 || numOfProd === -1){
+        const prOnBill = productsOnBill[product['CODIGO']];
+        prOnBill.CANTIDAD = parseFloat(prOnBill.CANTIDAD) + parseFloat(numOfProd);
+        prOnBill.IMPORTE = hasDiscount ? prOnBill.CANTIDAD * prOnBill.MAYOREO : prOnBill.CANTIDAD * prOnBill.PVENTA;
+    
+        update_product_row(prOnBill);
+        calculateTotalBill(productsOnBill);
+    }
     inputSearchProduct.focus();
+};
+
+const refresh_product_on_bill = (codigo) => {
+    console.log('refresh')
+    const prOnBill = productsOnBill[codigo];
+    prOnBill.IMPORTE = hasDiscount ? roundNumber(prOnBill.CANTIDAD * prOnBill.MAYOREO) : roundNumber(prOnBill.CANTIDAD * prOnBill.PVENTA);
+
+    update_product_row(prOnBill);
+    calculateTotalBill(productsOnBill);
 };
 
 const add_product_to_bill = (product, cantity) => {
     //Si el precio de mayoreo es menor al costo, es perdida, por lo que usaremos el PVENTA
-    const mayoreo = product['PCOSTO'] < product['MAYOREO'] ? product['MAYOREO'] : product['PVENTA'];
-    productsOnBill[product['CODIGO']] = {
-        CODIGO: product['CODIGO'],
-        DESCRIPCION: product['DESCRIPCION'],
-        PVENTA: product['PVENTA'],
-        MAYOREO: mayoreo,
-        PCOSTO: product['PCOSTO'] ? product['PCOSTO'] : product['PVENTA'],
-        TVENTA: product['TVENTA'],
-        CANTIDAD: cantity,
-        IMPORTE: hasDiscount ? mayoreo * cantity  : product['PVENTA'] * cantity,
+    if(cantity > 0){
+        const mayoreo = product['PCOSTO'] < product['MAYOREO'] ? product['MAYOREO'] : product['PVENTA'];
+        productsOnBill[product['CODIGO']] = {
+            CODIGO: product['CODIGO'],
+            DESCRIPCION: product['DESCRIPCION'],
+            PVENTA: parseFloat(product['PVENTA'].toFixed(2)),
+            MAYOREO: parseFloat(mayoreo.toFixed(2)),
+            PCOSTO: product['PCOSTO'] ? product['PCOSTO'] : product['PVENTA'],
+            TVENTA: product['TVENTA'],
+            CANTIDAD: cantity,
+            IMPORTE: hasDiscount ? roundNumber(mayoreo * cantity) : roundNumber(product['PVENTA'] * cantity),
+        }
+    
+        create_product_row(productsOnBill[product['CODIGO']]);
+        calculateTotalBill(productsOnBill);
     }
-
-    console.log('')
-
-    create_product_row(productsOnBill[product['CODIGO']]);
-
-    calculateTotalBill(productsOnBill);
-
     inputSearchProduct.focus();
 };
 
+function roundNumber(numero) {
+    // Extraer la parte entera y los decimales del número
+    let entero = Math.floor(numero);
+    let decimales = numero - entero;
+
+    if (decimales <= 0.20){
+        return entero;
+    }else if (decimales <= 0.50) {
+        return entero + 0.50;
+    } else {
+        return Math.ceil(numero);
+    }
+}
 
 const venta_a_granel = (product) => {
     divCantityProduct.hidden = false;
@@ -134,9 +166,9 @@ const undoOrAplyDiscount = () =>{
 
     hasDiscount ? add_discount_shader() : remove_discount_shader()
 
-    btnDiscount.innerText = !hasDiscount ? 'Aplicar Mayoreo [F1]' : 'Deshacer Mayoreo [F1]';
+    btnDiscount.innerHTML = !hasDiscount ? 'Aplicar Mayoreo [F11] <i class="fa-solid fa-tag"></i>' : 'Deshacer Mayoreo [F11] <i class="fa-solid fa-tag"></i>';
 
-    for(let key in productsOnBill) update_product_on_bill(productsOnBill[key], 0);
+    for(let key in productsOnBill) refresh_product_on_bill(key, 0);
     
 };
 
@@ -157,12 +189,14 @@ function addGranelProduct(event){
 
 //Manejo de la cuenta al cobrar---------------------------------
 function submit_Bill(){
-    ticketSubmitDiv.hidden = false;
-    inputChange.focus();
-    const total = calculateTotalBill(productsOnBill); 
-    inputChange.value = total;
-    document.getElementById('complete-ticket-bill').innerText = `Cobrar: $ ${total}`;
-    document.getElementById('cantity-of-change').innerText = '$ 0.00';
+    if(Object.keys(productsOnBill).length > 0){
+        ticketSubmitDiv.hidden = false;
+        inputChange.focus();
+        const total = calculateTotalBill(productsOnBill); 
+        inputChange.value = total;
+        document.getElementById('complete-ticket-bill').innerText = `Cobrar: $ ${total}`;
+        document.getElementById('cantity-of-change').innerText = '$ 0.00';
+    }else alert('Cuenta vacia!...')
 }
 
 async function submit_ticket(bill, change = 0 , notes = '' ,printerName, willPrint = true) {
@@ -194,7 +228,7 @@ async function submit_ticket(bill, change = 0 , notes = '' ,printerName, willPri
 };
 
 function collectTheBill(){
-    if(Object.keys(productsOnBill).length !== 0){
+    if(Object.keys(productsOnBill).length > 0){
         const notes = document.getElementById('notes-for-sell').value;
         submit_ticket(productsOnBill, inputChange.value, notes, selectPrinter.value, false);
         ticketSubmitDiv.hidden = true;
@@ -203,4 +237,19 @@ function collectTheBill(){
         calculateTotalBill(productsOnBill);
         alert('Cobro realizado!...');
     }else alert('Cuenta vacia!...');
+}
+
+function isToolEnabled(){
+    //Añadir los elementos divs que alguna vez se ocultaran
+    const toolsArray = [findedDiv, divCantityProduct, ticketSubmitDiv, commonArticleDiv];
+    var isEnabled = false;
+
+    toolsArray.forEach(div => {
+        if(!div.hidden){
+            isEnabled = true;
+            return
+        }
+    });
+
+    return isEnabled;
 }

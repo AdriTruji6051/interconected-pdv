@@ -6,8 +6,8 @@ const totalH1 = document.getElementById('total');
 const submitBillBtn = document.getElementById('submit-bill');
 const selectPrinter = document.getElementById('select-printer');
 
-const findedTable = document.getElementById('finded-products-table-body');
 const findedDiv = document.getElementById('finded-products-container');
+const findedTable = document.getElementById('finded-products-table-body');
 const btnAddFindedProduct = document.getElementById('add-finded-product');
 
 const btnDiscount = document.getElementById('btn-aply-discount');
@@ -25,11 +25,12 @@ const ticketSubmitDiv = document.getElementById('complete-the-ticket-submit');
 const inputChange = document.getElementById('change-for-ticket');
 const ticketSubmitForm = document.getElementById('ticket-change&notes-form');
 
+const commonArticleDiv = document.getElementById('common-article-div');
 const commonArticleCantity = document.getElementById('common-article-cantity');
 const commonArticleDescription = document.getElementById('common-article-name');
 const commonArticlePrice = document.getElementById('common-article-price');
 const commonArticleForm = document.getElementById('common-article-form');
-const commonArticleDiv = document.getElementById('common-article-div');
+
 
 
 //Almacenamiento de la cuenta
@@ -90,6 +91,7 @@ inputChange.addEventListener('input', function(){
 divCantityProduct.addEventListener('focusout', function(event){
     if(!divCantityProduct.contains(event.relatedTarget)){
         divCantityProduct.hidden = true;
+        inputSearchProduct.focus();
     }
 });
 
@@ -97,18 +99,21 @@ findedDiv.addEventListener('focusout', function(event){
     if(!findedDiv.contains(event.relatedTarget)){
         reset_finded_product_var();
         findedDiv.hidden = true;
+        inputSearchProduct.focus();
     }
 });
 
 commonArticleDiv.addEventListener('focusout', function(event){
     if(!commonArticleDiv.contains(event.relatedTarget)){
         commonArticleDiv.hidden = true;
+        inputSearchProduct.focus();
     }
 });
 
 ticketSubmitDiv.addEventListener('focusout', function(event){
     if(!ticketSubmitDiv.contains(event.relatedTarget)){
         ticketSubmitDiv.hidden = true;
+        inputSearchProduct.focus();
     }
 });
 
@@ -159,4 +164,6 @@ commonArticleForm.addEventListener('submit', function(event){
     commonArticleCantity.value = 0;
     commonArticleDescription.value = '';
     commonArticlePrice.value = 0;
+
+    inputSearchProduct.focus();
 });
