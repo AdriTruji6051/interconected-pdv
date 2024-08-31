@@ -24,8 +24,9 @@ def create_ticket_struct(products, change, notes):
 
         TICKET_TXT += str(CANTIDAD) + ' ' + str(DESCRIPCION) + '    ' + str(IMPORTE) + '#-# '
     
-    TICKET_TXT += ' '#str(f'-------------------------------#-##-#Total: {total_local} {'#-#Cambio:' + str(float(change) - float(total_local)) if change else ''}')
-
+    #TICKET_TXT += str(f'-------------------------------#-##-#Total: {total_local} {'#-#Cambio:' + str(float(change) - float(total_local)) if change else ''}')
+    TICKET_TXT += str(f'-------------------------------#-##-#Total: {total_local}')
+    TICKET_TXT += str(f'#-#Cambio: {float(total_local) - float(change)}') if change else ' '
     return TICKET_TXT
 
 
