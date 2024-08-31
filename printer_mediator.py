@@ -12,6 +12,8 @@ def list_printers() -> list:
 
 def create_ticket_struct(products, change, notes):
     total_local = 0
+    TICKET_TXT = 'Tel: 373 734 9861#-#Cel: 33 1076 7498'
+
     if type(notes) != bool: TICKET_TXT = notes + '#-##-# -------------------------------'
     else: TICKET_TXT = '#-##-# -------------------------------'
 
@@ -26,7 +28,7 @@ def create_ticket_struct(products, change, notes):
     
     #TICKET_TXT += str(f'-------------------------------#-##-#Total: {total_local} {'#-#Cambio:' + str(float(change) - float(total_local)) if change else ''}')
     TICKET_TXT += str(f'-------------------------------#-##-#Total: {total_local}')
-    TICKET_TXT += str(f'#-#Cambio: {float(total_local) - float(change)}') if change else ' '
+    TICKET_TXT += str(f'#-#Cambio:  {float(change) - float(total_local)}') if change else ' '
     return TICKET_TXT
 
 
@@ -54,6 +56,7 @@ def print_ticket(text, printer_name) -> bool:
         font = win32ui.CreateFont({
             "name": "Arial",
             "height": 35,  # Ajuste la altura de la fuente para adaptarse a 80mm
+            "weight": 700,
         })
         hDC.SelectObject(font)
 
