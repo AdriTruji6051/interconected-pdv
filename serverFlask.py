@@ -32,20 +32,7 @@ def calculate_total_articles(products):
         total_article += float(products[key]['CANTIDAD'])
     return total_article
 
-def sqlite3_query(query) -> list:
-    res = []
-    conSQL = sqlite3.connect("./pchdata.sqlite3")
-    cursorSQL = conSQL.cursor()
-    rows = cursorSQL.execute(query)
-    for row in rows:
-        res.append(row)
-
-    conSQL.commit()
-    conSQL.close()
-
-    return res
-
-def sqlite3_query_params(query, params) -> list:
+def sqlite3_query_params(query, params = [], commit = False) -> list:
     res = []
     conSQL = sqlite3.connect("./pchdata.sqlite3")
     cursorSQL = conSQL.cursor()
@@ -53,7 +40,7 @@ def sqlite3_query_params(query, params) -> list:
     for row in rows:
         res.append(row)
 
-    conSQL.commit()
+    if(commit): conSQL.commit() 
     conSQL.close()
 
     return res
@@ -162,7 +149,7 @@ def insertProduct():
 
         params = parse_paramas_to_array(data)
         sql = 'INSERT INTO PRODUCTOS (CODIGO, DESCRIPCION, TVENTA, PCOSTO, PVENTA, DEPT, MAYOREO, IPRIORIDAD, DINVENTARIO, DINVMINIMO, DINVMAXIMO, CHECADO_EN, PORCENTAJE_GANANCIA) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)'
-        sqlite3_query_params(sql, params)
+        sqlite3_query_params(query= sql, params = params, commit= True)
 
         return jsonify({'status': 201})
     
@@ -179,7 +166,7 @@ def updateProduct():
 
         params = parse_paramas_to_array(data)
         sql = 'UPDATE PRODUCTOS SET DESCRIPCION = ?, TVENTA = ?, PCOSTO = ?, PVENTA = ?, DEPT = ?, MAYOREO = ?, IPRIORIDAD = ?, DINVENTARIO = ?, DINVMINIMO = ?, DINVMAXIMO = ?, CHECADO_EN = ?, PORCENTAJE_GANANCIA = ? WHERE CODIGO = ?;'
-        sqlite3_query_params(sql,params)
+        sqlite3_query_params(query= sql, params = params, commit= True)
 
         return jsonify({'status': 201})
     
@@ -199,7 +186,7 @@ def deleteProduct():
         ]
     
         sql = 'DELETE FROM PRODUCTOS WHERE CODIGO = ?;'
-        sqlite3_query_params(sql,params)
+        sqlite3_query_params(query= sql, params = params, commit= True)
 
         return jsonify({'status': 202})
     
@@ -215,88 +202,100 @@ def getPrinters():
 
 @app.route('/print/new/ticket', methods=['POST'])
 def createTicket():
-    data = request.get_json()
-    if data is None:
-        print('No data')
-        return jsonify({'error': 'No se recibió ningún JSON'}), 400
-    
-    #Impresion del ticket
-    willPrint = bool(data.get('print'))
-    products = data.get('products')
-    printerName = data.get('printerName')
-    change = data.get('change')
-    notes = data.get('notes')
+    try:
+        data = request.get_json()
+        if data is None:
+            print('No data')
+            return jsonify({'error': 'No se recibió ningún JSON'}), 400
+        
+        #Impresion del ticket
+        willPrint = bool(data.get('print'))
+        products = data.get('products')
+        printerName = data.get('printerName')
+        paidWith = float(data.get('change'))
+        notes = data.get('notes')
+        totalBill = calculate_total_bill(products)
 
-    ticketStruct = create_ticket_struct(products, change, notes)
+        ticketStruct = create_ticket_struct(products = products,change = paidWith - totalBill, notes = notes)
 
-    if willPrint : print_ticket(ticketStruct,printerName)
+        if willPrint : print_ticket(ticketStruct,printerName)
 
-    #AQUI DEBEMOS CREAR LA ESTRUCTURA DEL TICKET Y GUARDARLO EN LA BD
-    sql = 'SELECT MAX(ID), MAX(FOLIO) FROM VENTATICKETS'
-    res = sqlite3_query(sql)
-    date = datetime.now()
+        #AQUI DEBEMOS CREAR LA ESTRUCTURA DEL TICKET Y GUARDARLO EN LA BD
+        sql = 'SELECT MAX(ID), MAX(FOLIO) FROM VENTATICKETS'
+        res = sqlite3_query_params(query = sql)
+        date = datetime.now()
 
-    for row in res:
-        res = row
-        break
-    
-    #DATOS PROVISIONALES, DEBEN SER DINAMICOS UNA VEZ SE COMPLETEN MAS PASOS DEL PROGRAMA....
-    params = [
-        res[0] + 1, #ID
-        res[1] + 1, #FOLIO
-        1, #CAJA_ID
-        1, #CAJERO_ID
-        'Ticket 1', #NOMBRE
-        date.strftime('%Y-%m-%d %H:%M:%S.%f'), #CREADO_EN 
-        calculate_total_bill(products), #SUBTOTAL
-        0.0, #IMPUESTOS
-        calculate_total_bill(products),  # TOTAL
-        calculate_total_profit(products), # GANANCIA
-        'f', # ESTA ABIERTO
-        None, #CLIENTE_ID
-        date.strftime('%Y-%m-%d %H:%M:%S'),  # VENDIDO_EN
-        't', # ES MODIFICABLE
-        calculate_total_bill(products) + float(change) if change else 0,  # PAGO_CON
-        'MXN', #MONEDA
-        calculate_total_articles(products), #NUMERO_ARTICULOS
-        date.strftime('%Y-%m-%d %H:%M:%S'),  # PAGADO EN
-        'f', #ESTA CANCELADO
-        '1000', #OPERACION_ID
-        None, #OLD_TICKET_ID
-        notes, #NOTAS
-        't' if willPrint else 'f', # IMPRIMIR NOTA
-        'e', #FORMA_PAGO
-        None, #REFERENCIA
-        None, #FACTURA_ID
-        0.0 #TOTAL_DEVUELTO
-    ]
+        for row in res:
+            res = row
+            break
 
-    sql = 'INSERT INTO VENTATICKETS (ID, FOLIO, CAJA_ID, CAJERO_ID, NOMBRE, CREADO_EN, SUBTOTAL, IMPUESTOS, TOTAL, GANANCIA, ESTA_ABIERTO, CLIENTE_ID, VENDIDO_EN, ES_MODIFICABLE, PAGO_CON, MONEDA, NUMERO_ARTICULOS, PAGADO_EN, ESTA_CANCELADO, OPERACION_ID, OLD_TICKET_ID, NOTAS, IMPRIMIR_NOTA, FORMA_PAGO, REFERENCIA, FACTURA_ID, TOTAL_DEVUELTO) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);'
-    sqlite3_query_params(sql, params)
-
-    sql = 'INSERT INTO VENTATICKETS_ARTICULOS (TICKET_ID, PRODUCTO_CODIGO, PRODUCTO_NOMBRE, CANTIDAD, GANANCIA, DEPARTAMENTO_ID, PAGADO_EN, USA_MAYOREO, PORCENTAJE_DESCUENTO, COMPONENTES, IMPUESTOS_USADOS, IMPUESTO_UNITARIO, PRECIO_USADO, CANTIDAD_DEVUELTA, FUE_DEVUELTO, PORCENTAJE_PAGADO) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);'
-    for key in products:
+        
+        #DATOS PROVISIONALES, DEBEN SER DINAMICOS UNA VEZ SE COMPLETEN MAS PASOS DEL PROGRAMA....
         params = [
-            res[0] + 1, #TICKET-ID
-            products[key]['CODIGO'], # PRODUCTO-CODIGO
-            products[key]['DESCRIPCION'], # PRODUCTO-NOMBRE
-            products[key]['CANTIDAD'], # CANTIDAD
-            float(products[key]['IMPORTE']) - float(products[key]['CANTIDAD']) * float(products[key]['PCOSTO']) if  float(products[key]['PCOSTO']) > 0 else float(products[key]['MAYOREO']), # GANANCIA
-            None, # DEPARTAMENTO
-            date.strftime('%Y-%m-%d %H:%M:%S'), # PAGADO-EN
-            None, #USA-MAYOREO
-            None, # PORCENTAJE-DESCUENTO
-            None, # COMPONENTES
-            None, # Impuestos usados
-            None, # Impuestos unitarios
-            float(float(products[key]['IMPORTE']) / float(products[key]['CANTIDAD'])), #PRECIO-USADO
-            0,
-            'f',
-            0,
+            res[0] + 1, #ID
+            res[1] + 1, #FOLIO
+            1, #CAJA_ID
+            1, #CAJERO_ID
+            'Ticket 1', #NOMBRE
+            date.strftime('%Y-%m-%d %H:%M:%S.%f'), #CREADO_EN 
+            calculate_total_bill(products), #SUBTOTAL
+            0.0, #IMPUESTOS
+            calculate_total_bill(products),  # TOTAL
+            calculate_total_profit(products), # GANANCIA
+            'f', # ESTA ABIERTO
+            None, #CLIENTE_ID
+            date.strftime('%Y-%m-%d %H:%M:%S'),  # VENDIDO_EN
+            't', # ES MODIFICABLE
+            paidWith,  # PAGO_CON
+            'MXN', #MONEDA
+            calculate_total_articles(products), #NUMERO_ARTICULOS
+            date.strftime('%Y-%m-%d %H:%M:%S'),  # PAGADO EN
+            'f', #ESTA CANCELADO
+            '1000', #OPERACION_ID
+            None, #OLD_TICKET_ID
+            notes, #NOTAS
+            't' if willPrint else 'f', # IMPRIMIR NOTA
+            'e', #FORMA_PAGO
+            None, #REFERENCIA
+            None, #FACTURA_ID
+            0.0 #TOTAL_DEVUELTO
         ]
-        sqlite3_query_params(sql, params)
-    
-    return jsonify({'impresion': 'EXITOSA'})
+
+        sql = 'INSERT INTO VENTATICKETS (ID, FOLIO, CAJA_ID, CAJERO_ID, NOMBRE, CREADO_EN, SUBTOTAL, IMPUESTOS, TOTAL, GANANCIA, ESTA_ABIERTO, CLIENTE_ID, VENDIDO_EN, ES_MODIFICABLE, PAGO_CON, MONEDA, NUMERO_ARTICULOS, PAGADO_EN, ESTA_CANCELADO, OPERACION_ID, OLD_TICKET_ID, NOTAS, IMPRIMIR_NOTA, FORMA_PAGO, REFERENCIA, FACTURA_ID, TOTAL_DEVUELTO) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);'
+        sqlite3_query_params(query= sql, params = params, commit= True)
+
+        sql = 'INSERT INTO VENTATICKETS_ARTICULOS (TICKET_ID, PRODUCTO_CODIGO, PRODUCTO_NOMBRE, CANTIDAD, GANANCIA, DEPARTAMENTO_ID, PAGADO_EN, USA_MAYOREO, PORCENTAJE_DESCUENTO, COMPONENTES, IMPUESTOS_USADOS, IMPUESTO_UNITARIO, PRECIO_USADO, CANTIDAD_DEVUELTA, FUE_DEVUELTO, PORCENTAJE_PAGADO) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);'
+        for key in products:
+            params = [
+                res[0] + 1, #TICKET-ID
+                products[key]['CODIGO'], # PRODUCTO-CODIGO
+                products[key]['DESCRIPCION'], # PRODUCTO-NOMBRE
+                products[key]['CANTIDAD'], # CANTIDAD
+                float(products[key]['IMPORTE']) - float(products[key]['CANTIDAD']) * float(products[key]['PCOSTO']) if  float(products[key]['PCOSTO']) > 0 else float(products[key]['MAYOREO']), # GANANCIA
+                None, # DEPARTAMENTO
+                date.strftime('%Y-%m-%d %H:%M:%S'), # PAGADO-EN
+                None, #USA-MAYOREO
+                None, # PORCENTAJE-DESCUENTO
+                None, # COMPONENTES
+                None, # Impuestos usados
+                None, # Impuestos unitarios
+                float(float(products[key]['IMPORTE']) / float(products[key]['CANTIDAD'])), #PRECIO-USADO
+                0,
+                'f',
+                0,
+            ]
+            sqlite3_query_params(query= sql, params = params, commit= True)
+        
+        return jsonify({'impresion': 'EXITOSA'})
+    except Exception as e:
+        print(e)
+        return jsonify({'impresion': 'FALLIDA'})
+
+@app.route('/get/ticket/day', methods=['GET'])
+def getTicketDay():
+    day =  request.args.get('day')
+    sql = ' '
+    return
 
 
 @app.route('/print/ticket', methods=['GET'])

@@ -221,20 +221,26 @@ async function submit_ticket(bill, change = 0 , notes = '' ,printerName, willPri
     })
     .then(response => response.json())
     .then(data => {
-        console.log(data.impresion);
+        console.log(data.impresion)
     })
     .catch((error) => {
-        console.error('Error:', error);
+        console.log(error);
     });
 };
 
-function collectTheBill(){
+function collectTheBill(event){
+    event.preventDefault();
+
     if(Object.keys(productsOnBill).length > 0){
         const notes = document.getElementById('notes-for-sell').value;
         submit_ticket(productsOnBill, inputChange.value, notes, selectPrinter.value, false);
+
+        //Esto es inutil pq se reinicia, xd
         ticketSubmitDiv.hidden = true;
-        productsOnBill = null;
+        productsOnBill = {};
         billTable.innerHTML = '';
+        document.getElementById('notes-for-sell').value = null;
+
         calculateTotalBill(productsOnBill);
         alert('Cobro realizado!...');
     }else alert('Cuenta vacia!...');

@@ -1,6 +1,6 @@
 :root{
     /* Purple colors */
-    /* --50-color: #f5f3ff;
+    /* --50-color: #fefffa;
     --100-color: #ede9fe;
     --200-color: #ddd5ff;
     --300-color: #c3b4fe;
@@ -13,7 +13,7 @@
     --950-color: #2e0f66; */
 
     /* Blue colors */
-    --50-color: #f0f6fe;
+    --50-color: #fefffa;
     --100-color: #dde9fc;
     --200-color: #c3dafa;
     --300-color: #84b6f4;
@@ -26,7 +26,7 @@
     --950-color: #1b2650;
 
     /* Yellow colors */
-    /* --50-color: #fff9ed;
+    /* --50-color: #fefffa;
     --100-color: #fff1d5;
     --200-color: #fedfaa;
     --300-color: #fdc063;
@@ -37,6 +37,20 @@
     --800-color: #9a4112;
     --900-color: #7c3712;
     --950-color: #431a07; */
+
+    /* Pink Colors */
+    /* --50-color: #fefffa;
+    --100-color: #fde6e9;
+    --200-color: #fbd0d9;
+    --300-color: #f7aab9;
+    --400-color: #f27a93;
+    --500-color: #e63f66;
+    --600-color: #d42a5b;
+    --700-color: #b21e4b;
+    --800-color: #951c45;
+    --900-color: #801b40;
+    --950-color: #470a1f; */
+
 }
 
 .legend img {
