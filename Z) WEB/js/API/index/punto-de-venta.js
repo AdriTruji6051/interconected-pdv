@@ -144,7 +144,7 @@ inputSearchProduct.addEventListener('keypress', function(event){
 
 //Para cobranza
 document.getElementById('show-notes').addEventListener('click', function(){
-    document.getElementById('notes-for-sell').hidden = false;
+    document.getElementById('notes-for-sell-div').hidden = false;
 });
 
 //CHAMBEANDO AQUI **********************************

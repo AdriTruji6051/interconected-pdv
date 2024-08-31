@@ -1,18 +1,42 @@
 :root{
-    --main-button-color: #8b5af8;
-    --main-button-hover-color: #7c37f0;
-    --ticket-bck-color: white;
-    --tools-bck-color: white;
-    --bill-bck-color: red;
-    --info-bar-back-color: #ede9fe;
-    --product-search-bck-color: yellow;
-    --ticket-print-prev-bck-color: white;
-    --finded-prodcuts-bck-color: white;
+    /* Purple colors */
+    /* --50-color: #f5f3ff;
+    --100-color: #ede9fe;
+    --200-color: #ddd5ff;
+    --300-color: #c3b4fe;
+    --400-color: #b197fc;
+    --500-color: #8b5af8;
+    --600-color: #7c37f0;
+    --700-color: #6d25dc;
+    --800-color: #5c1fb8;
+    --900-color: #4d1b97;
+    --950-color: #2e0f66; */
 
-    --navbar-bcl-color: #ddd5ff;
-    --light-text-color: #f5f3ff;
-    --warning-btn-color: #4d1b97;
-    --warning-btn-color-hover: #2e0f66;
+    /* Blue colors */
+    --50-color: #f0f6fe;
+    --100-color: #dde9fc;
+    --200-color: #c3dafa;
+    --300-color: #84b6f4;
+    --400-color: #6aa3f0;
+    --500-color: #4781ea;
+    --600-color: #3264de;
+    --700-color: #2950cc;
+    --800-color: #2842a5;
+    --900-color: #253b83;
+    --950-color: #1b2650;
+
+    /* Yellow colors */
+    /* --50-color: #fff9ed;
+    --100-color: #fff1d5;
+    --200-color: #fedfaa;
+    --300-color: #fdc063;
+    --400-color: #fba43c;
+    --500-color: #f98816;
+    --600-color: #ea6d0c;
+    --700-color: #c2520c;
+    --800-color: #9a4112;
+    --900-color: #7c3712;
+    --950-color: #431a07; */
 }
 
 .legend img {
@@ -25,44 +49,46 @@
 }
 
 .btn-primary-color{
-    background-color: var(--main-button-color);
-    color: var(--light-text-color);
+    border: 1px solid var(--500-color);
+    background-color: var(--500-color);
+    color: var(--50-color);
     font-weight: 500;
 }
 
 .btn-primary-color:hover{
-    background-color: var(--main-button-hover-color);
-    color: var(--light-text-color);
+    background-color: var(--600-color);
+    border: 1px solid var(--600-color);
+    color: var(--50-color);
     font-weight: 500;
 }
 
 .btn-outline-color{
-    border: 1px solid var(--main-button-color);
-    color: var(--main-button-color);
+    border: 1px solid var(--500-color);
+    color: var(--500-color);
     font-weight: 500;
 }
 
 .btn-outline-color:hover{
-    background-color: var(--main-button-hover-color);
-    color: var(--light-text-color);
+    background-color: var(--600-color);
+    color: var(--50-color);
     font-weight: 500;
 }
 
 .btn-warning-color{
-    border: 1px solid var(--warning-btn-color);
-    color: var(--warning-btn-color);
+    border: 1px solid var(--900-color);
+    color: var(--900-color);
     font-weight: 500;
 }
 
 .btn-warning-color:hover{
-    background-color: var(--warning-btn-color-hover);
-    color: var(--light-text-color);
+    background-color: var(--900-color);
+    color: var(--50-color);
     font-weight: 500;
 }
 
 #navbar{
     max-height: 50px;
-    background: var(--navbar-bcl-color) !important;
+    background: var(--200-color) !important;
 }
 
 #main-container{
@@ -74,28 +100,28 @@
 
 #tools{
     height: calc(100vh - 50px);
-    background-color: var(--tools-bck-color);
+    background-color: var(--50-color);
 }
 
 #ticket{
     height: calc(100vh - 50px);
-    background-color: var(--ticket-bck-color);
+    background-color: var(--50-color);
     padding: 0;
 }
 
 #ticket-print-prev{
-    background-color: var(--ticket-print-prev-bck-color);
+    background-color: var(--50-color);
     height: calc(100vh - 50px);
 }
 
 #finded-products{
-    background-color: var(--finded-prodcuts-bck-color);
+    background-color: var(--50-color);
     height: calc(100vh - 140px);
     overflow-y: auto;
 }
 
 #control-finded-panel{
-    background-color: var(--finded-prodcuts-bck-color);
+    background-color: var(--50-color);
     height: 50px;
 }
 
@@ -119,7 +145,7 @@
 }
 
 #info-bar{
-    background-color: var(--info-bar-back-color);
+    background-color: var(--200-color);
     height: 17%;
 }
 

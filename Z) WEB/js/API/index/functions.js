@@ -73,7 +73,7 @@ const update_product_on_bill = (product, numOfProd) => {
     if(numOfProd > 0 || numOfProd === -1){
         const prOnBill = productsOnBill[product['CODIGO']];
         prOnBill.CANTIDAD = parseFloat(prOnBill.CANTIDAD) + parseFloat(numOfProd);
-        prOnBill.IMPORTE = hasDiscount ? prOnBill.CANTIDAD * prOnBill.MAYOREO : prOnBill.CANTIDAD * prOnBill.PVENTA;
+        prOnBill.IMPORTE = hasDiscount ? roundNumber(prOnBill.CANTIDAD * prOnBill.MAYOREO) : roundNumber(prOnBill.CANTIDAD * prOnBill.PVENTA);
     
         update_product_row(prOnBill);
         calculateTotalBill(productsOnBill);
@@ -116,7 +116,7 @@ function roundNumber(numero) {
     let entero = Math.floor(numero);
     let decimales = numero - entero;
 
-    if (decimales <= 0.20){
+    if (decimales === 0){
         return entero;
     }else if (decimales <= 0.50) {
         return entero + 0.50;
@@ -222,7 +222,6 @@ async function submit_ticket(bill, change = 0 , notes = '' ,printerName, willPri
     .then(response => response.json())
     .then(data => {
         console.log(data.impresion);
-        alert('Submited!..');
     })
     .catch((error) => {
         console.error('Error:', error);

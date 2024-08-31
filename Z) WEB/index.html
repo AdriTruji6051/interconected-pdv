@@ -105,13 +105,22 @@
 
                     <!-- Inicio ticket preview BEFORE cobrar -->
                     <div id="complete-the-ticket-submit" tabindex="0" hidden>
-                        <h1 id="complete-ticket-bill">...</h1>
-                        <h3 id="cantity-of-change">...</h3>
+                        <h1 id="complete-ticket-bill" class="display-4 mb-2"></h1>
+                        <h3 id="cantity-of-change" class="display-5 mb-3"></h3>
+
                         <form action="submit" id="ticket-change&notes-form">
-                            <input type="number" step="any" id="change-for-ticket">
-                            <textarea id="notes-for-sell" placeholder="Introduce las notas de venta" hidden></textarea>
-                            <button type="button" id="show-notes">Agregar notas de venta</button>
-                            <button type="submit">Cobrar</button>
+                            <div class="input-group mb-3">
+                                <span class="input-group-text">$</span>
+                                <input type="number" class="form-control" step="any" id="change-for-ticket">
+                            </div>
+                            
+                            <div class="form-floating mb-3" id="notes-for-sell-div" hidden>
+                                <textarea id="notes-for-sell" class="form-control" placeholder="Introduce las notas de venta"></textarea>
+                                <label for="notes-for-sell">Notas de la venta</label>
+                            </div>
+                            
+                            <button type="button" id="show-notes" class="btn btn-outline-color">Agregar notas de venta</button>
+                            <button type="submit" class="btn btn-primary-color">Cobrar</button>
                         </form>
                     </div>                    
                     <!-- Final ticket preview -->
@@ -151,7 +160,7 @@
                             </table>
                         </div>
                         <div id="control-finded-panel">
-                            <button id="add-finded-product" class="btn btn-primary-color">Agregar producto</button>
+                            <button id="add-finded-product" class="btn btn-primary-color mx-3 my-2">Agregar producto</button>
                         </div>
                     </div>
                     <!-- Final finded products panel -->
