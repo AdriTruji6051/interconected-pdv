@@ -9,6 +9,8 @@ function manageKeyPressed(event){
         addFindedProductToBill();
     }else if(key === 'Enter' && !isToolEnabled()){
         searchProduct();
+    }else if(key === 'Escape' && isToolEnabled()){
+        inputSearchProduct.focus();
     }else if(event.ctrlKey && key === 'p'){
         event.preventDefault();
         commonProduct();
@@ -177,7 +179,7 @@ const undoOrAplyDiscount = () =>{
 //Venta de producto comun --------------------------------------
 function commonProduct(){
     commonArticleDiv.hidden = false;
-    commonArticleCantity.focus();
+    commonArticleDescription.focus();
 }
 
 function addGranelProduct(event){

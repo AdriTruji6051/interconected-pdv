@@ -3,9 +3,9 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 from datetime import datetime
 import threading
-import sqlite3
 import json
 from printer_mediator import list_printers, print_ticket, create_ticket_struct
+import sqlite3
 
 app = Flask(__name__)
 CORS(app, supports_credentials=True)
@@ -32,7 +32,8 @@ def calculate_total_articles(products):
         total_article += float(products[key]['CANTIDAD'])
     return total_article
 
-def sqlite3_query_params(query, params = [], commit = False) -> list:
+#import sqlite3
+def sqlite3_query(query, params = [], commit = False) -> list:
     res = []
     conSQL = sqlite3.connect("./pchdata.sqlite3")
     cursorSQL = conSQL.cursor()
@@ -88,7 +89,7 @@ def getProduct():
     res = None
     value = request.args.get('value')
     sql = "SELECT CODIGO, DESCRIPCION, TVENTA, PCOSTO, PVENTA, DEPT, MAYOREO, IPRIORIDAD, DINVENTARIO, DINVMINIMO, DINVMAXIMO, CHECADO_EN, PORCENTAJE_GANANCIA FROM PRODUCTOS WHERE CODIGO = ?"
-    rows = sqlite3_query_params(sql, [value])
+    rows = sqlite3_query(sql, [value])
     
     for row in rows:
         res = row
@@ -103,7 +104,7 @@ def getProduct():
 
         #Obtenemos los que coincidan al principio
         sql = "SELECT CODIGO, DESCRIPCION, TVENTA, PCOSTO, PVENTA, DEPT, MAYOREO, IPRIORIDAD, DINVENTARIO, DINVMINIMO, DINVMAXIMO, CHECADO_EN, PORCENTAJE_GANANCIA FROM PRODUCTOS WHERE DESCRIPCION LIKE ?"
-        rowsPriority = sqlite3_query_params(sql,[f'{value}%'])
+        rowsPriority = sqlite3_query(sql,[f'{value}%'])
         
         for row in rowsPriority:
             alreadyAdd.add(row[0])
@@ -112,7 +113,7 @@ def getProduct():
 
         #Obtenemos todas las coincidencias y agregamos a los productos encontrados
         sql = "SELECT CODIGO, DESCRIPCION, TVENTA, PCOSTO, PVENTA, DEPT, MAYOREO, IPRIORIDAD, DINVENTARIO, DINVMINIMO, DINVMAXIMO, CHECADO_EN, PORCENTAJE_GANANCIA FROM PRODUCTOS WHERE DESCRIPCION LIKE ?"
-        rowsComplementary = sqlite3_query_params(sql,[f'%{value}%'])
+        rowsComplementary = sqlite3_query(sql,[f'%{value}%'])
 
         for row in rowsComplementary:
             if row[0] not in alreadyAdd:
@@ -128,7 +129,7 @@ def getProductById():
     res = None
     value = request.args.get('value')
     sql = "SELECT CODIGO, DESCRIPCION, TVENTA, PCOSTO, PVENTA, DEPT, MAYOREO, IPRIORIDAD, DINVENTARIO, DINVMINIMO, DINVMAXIMO, CHECADO_EN, PORCENTAJE_GANANCIA FROM PRODUCTOS WHERE CODIGO = ?"
-    rows = sqlite3_query_params(sql, [value])
+    rows = sqlite3_query(sql, [value])
 
     for row in rows:
         res = row
@@ -149,7 +150,7 @@ def insertProduct():
 
         params = parse_paramas_to_array(data)
         sql = 'INSERT INTO PRODUCTOS (CODIGO, DESCRIPCION, TVENTA, PCOSTO, PVENTA, DEPT, MAYOREO, IPRIORIDAD, DINVENTARIO, DINVMINIMO, DINVMAXIMO, CHECADO_EN, PORCENTAJE_GANANCIA) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)'
-        sqlite3_query_params(query= sql, params = params, commit= True)
+        sqlite3_query(query= sql, params = params, commit= True)
 
         return jsonify({'status': 201})
     
@@ -166,7 +167,7 @@ def updateProduct():
 
         params = parse_paramas_to_array(data)
         sql = 'UPDATE PRODUCTOS SET DESCRIPCION = ?, TVENTA = ?, PCOSTO = ?, PVENTA = ?, DEPT = ?, MAYOREO = ?, IPRIORIDAD = ?, DINVENTARIO = ?, DINVMINIMO = ?, DINVMAXIMO = ?, CHECADO_EN = ?, PORCENTAJE_GANANCIA = ? WHERE CODIGO = ?;'
-        sqlite3_query_params(query= sql, params = params, commit= True)
+        sqlite3_query(query= sql, params = params, commit= True)
 
         return jsonify({'status': 201})
     
@@ -186,7 +187,7 @@ def deleteProduct():
         ]
     
         sql = 'DELETE FROM PRODUCTOS WHERE CODIGO = ?;'
-        sqlite3_query_params(query= sql, params = params, commit= True)
+        sqlite3_query(query= sql, params = params, commit= True)
 
         return jsonify({'status': 202})
     
@@ -222,7 +223,7 @@ def createTicket():
 
         #AQUI DEBEMOS CREAR LA ESTRUCTURA DEL TICKET Y GUARDARLO EN LA BD
         sql = 'SELECT MAX(ID), MAX(FOLIO) FROM VENTATICKETS'
-        res = sqlite3_query_params(query = sql)
+        res = sqlite3_query(query = sql)
         date = datetime.now()
 
         for row in res:
@@ -262,7 +263,7 @@ def createTicket():
         ]
 
         sql = 'INSERT INTO VENTATICKETS (ID, FOLIO, CAJA_ID, CAJERO_ID, NOMBRE, CREADO_EN, SUBTOTAL, IMPUESTOS, TOTAL, GANANCIA, ESTA_ABIERTO, CLIENTE_ID, VENDIDO_EN, ES_MODIFICABLE, PAGO_CON, MONEDA, NUMERO_ARTICULOS, PAGADO_EN, ESTA_CANCELADO, OPERACION_ID, OLD_TICKET_ID, NOTAS, IMPRIMIR_NOTA, FORMA_PAGO, REFERENCIA, FACTURA_ID, TOTAL_DEVUELTO) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);'
-        sqlite3_query_params(query= sql, params = params, commit= True)
+        sqlite3_query(query= sql, params = params, commit= True)
 
         sql = 'INSERT INTO VENTATICKETS_ARTICULOS (TICKET_ID, PRODUCTO_CODIGO, PRODUCTO_NOMBRE, CANTIDAD, GANANCIA, DEPARTAMENTO_ID, PAGADO_EN, USA_MAYOREO, PORCENTAJE_DESCUENTO, COMPONENTES, IMPUESTOS_USADOS, IMPUESTO_UNITARIO, PRECIO_USADO, CANTIDAD_DEVUELTA, FUE_DEVUELTO, PORCENTAJE_PAGADO) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);'
         for key in products:
@@ -284,7 +285,7 @@ def createTicket():
                 'f',
                 0,
             ]
-            sqlite3_query_params(query= sql, params = params, commit= True)
+            sqlite3_query(query= sql, params = params, commit= True)
         
         return jsonify({'impresion': 'EXITOSA'})
     except Exception as e:
@@ -293,8 +294,21 @@ def createTicket():
 
 @app.route('/get/ticket/day', methods=['GET'])
 def getTicketDay():
-    day =  request.args.get('day')
-    sql = ' '
+    #day =  request.args.get('day')
+    sql = 'SELECT ID, FOLIO, TOTAL, PAGO_CON, NUMERO_ARTICULOS, PAGADO_EN, NOTAS FROM VENTATICKETS WHERE PAGADO_EN like ?;'
+    day = '2024-08-30'
+    rows = sqlite3_query(query=sql, params=[f'{day}%'])
+
+    sql = 'SELECT PRODUCTO_CODIGO, PRODUCTO_NOMBRE, CANTIDAD, PRECIO_USADO FROM VENTATICKETS_ARTICULOS WHERE TICKET_ID = ?;'
+    ticketsInfo = {}
+
+    for row in rows:
+        ticketID = row[0]
+        ticketsInfo[ticketID] = sqlite3_query(query=sql, params=[ticketID])
+
+    for key in ticketsInfo:
+        print(key, ticketsInfo[key])
+        
     return
 
 
