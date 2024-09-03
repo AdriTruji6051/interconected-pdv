@@ -11,30 +11,39 @@ def list_printers() -> list:
     return avaliable_printers
 
 def create_ticket_struct(products, change, notes):
-    total_local = 0
-    TICKET_TXT = 'Tel: 373 734 9861#-#Cel: 33 1076 7498'
+    try:
+        total_local = 0
+        TICKET_TXT = 'Tel: 373 734 9861#-#Cel: 33 1076 7498#-#'
 
-    if type(notes) != bool: TICKET_TXT = notes + '#-##-# -------------------------------'
-    else: TICKET_TXT = '#-##-# -------------------------------'
+        if type(notes) != bool: TICKET_TXT += notes + '#-##-#----------------------------------------------->#-#' 
+        else: TICKET_TXT += '#-#----------------------------------------------->#-#'
 
-    for key in products:
-        DESCRIPCION = products[key]['DESCRIPCION']
-        PVENTA = products[key]['PVENTA']
-        CANTIDAD = products[key]['CANTIDAD']
-        IMPORTE = products[key]['IMPORTE']
-        total_local += IMPORTE
+        for key in products:
+            DESCRIPCION = products[key]['DESCRIPCION']
+            PVENTA = products[key]['PVENTA']
+            CANTIDAD = products[key]['CANTIDAD']
+            IMPORTE = products[key]['IMPORTE']
+            total_local += IMPORTE
 
-        TICKET_TXT += str(CANTIDAD) + ' ' + str(DESCRIPCION) + '    ' + str(IMPORTE) + '#-# '
-    
-    #TICKET_TXT += str(f'-------------------------------#-##-#Total: {total_local} {'#-#Cambio:' + str(float(change) - float(total_local)) if change else ''}')
-    TICKET_TXT += str(f'-------------------------------#-##-#Total: {total_local}')
-    TICKET_TXT += str(f'#-#Cambio:  {float(change) - float(total_local)}') if change else ' '
-    return TICKET_TXT
-
+            TICKET_TXT += str(CANTIDAD) + ' ' + str(DESCRIPCION) + '    ' + str(IMPORTE) + '#-# '
+        
+        #TICKET_TXT += str(f'----------------------------------------------->#-##-#Total: {total_local} {'#-#Cambio:' + str(float(change) - float(total_local)) if change else ''}')
+        TICKET_TXT += str(f'----------------------------------------------->#-##-#Total: {total_local} #-##-#Gracias por su compra!...')
+        #TICKET_TXT += str(f'#-#Cambio:  {float(change) - float(total_local)}') if change else ' '
+        return TICKET_TXT
+    except Exception as e:
+        print(e)
 
 def print_ticket(text, printer_name) -> bool:
     hPrinter = win32print.OpenPrinter(printer_name)
     try:
+        # Abre el cajón de dinero
+        win32print.StartDocPrinter(hPrinter, 1, ("Open Drawer", None, "RAW"))
+        win32print.StartPagePrinter(hPrinter)
+        win32print.WritePrinter(hPrinter, b'\x1B\x70\x00\x19\xFA')
+        win32print.EndPagePrinter(hPrinter)
+        win32print.EndDocPrinter(hPrinter)
+
         hDC = win32ui.CreateDC()
         hDC.CreatePrinterDC(printer_name)
         hDC.StartDoc("Ticket")
@@ -43,7 +52,6 @@ def print_ticket(text, printer_name) -> bool:
         # Imprimir una imagen
         bmp = Image.open('./logo.jpg')
         bmp = bmp.resize((250, 250))  # Resize as needed
-
 
         y = 50  # Initial Y position
 
@@ -55,8 +63,8 @@ def print_ticket(text, printer_name) -> bool:
 
         font = win32ui.CreateFont({
             "name": "Arial",
-            "height": 35,  # Ajuste la altura de la fuente para adaptarse a 80mm
-            "weight": 700,
+            "height": 38,  # Ajuste la altura de la fuente para adaptarse a 80mm
+            "weight": 550,
         })
         hDC.SelectObject(font)
 
@@ -68,16 +76,27 @@ def print_ticket(text, printer_name) -> bool:
 
         hDC.EndPage()
         hDC.EndDoc()
-
+        print('Exitosa!')
         return True
     except Exception as e:
+        print('Error!')
         print(e)
-
         return False
     finally:
         print('Finally')
         win32print.ClosePrinter(hPrinter)
 
-# text = "Este es un ticket de ejemplo\nLínea 2\nLínea 3"
-# printer_name = "impresion"  # Cambia esto por el nombre de tu impresora
-# print_ticket(text, printer_name)
+def open_drawer(printer_name):
+    hPrinter = win32print.OpenPrinter(printer_name)
+    try:
+        win32print.StartDocPrinter(hPrinter, 1, ("Open Drawer", None, "RAW"))
+        win32print.StartPagePrinter(hPrinter)
+        win32print.WritePrinter(hPrinter, b'\x1B\x70\x00\x19\xFA')
+        win32print.EndPagePrinter(hPrinter)
+        win32print.EndDocPrinter(hPrinter)
+        print('Drawer open!')
+    except Exception as e:
+        print('Error!')
+        print(e)
+    finally:
+        win32print.ClosePrinter(hPrinter)
