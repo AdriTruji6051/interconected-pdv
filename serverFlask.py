@@ -294,22 +294,21 @@ def createTicket():
 
 @app.route('/get/ticket/day', methods=['GET'])
 def getTicketDay():
-    #day =  request.args.get('day')
-    sql = 'SELECT ID, FOLIO, TOTAL, PAGO_CON, NUMERO_ARTICULOS, PAGADO_EN, NOTAS FROM VENTATICKETS WHERE PAGADO_EN like ?;'
-    day = '2024-08-30'
-    rows = sqlite3_query(query=sql, params=[f'{day}%'])
+    try:
+        day =  request.args.get('day')
+        sql = 'SELECT ID, FOLIO, TOTAL, PAGO_CON, NUMERO_ARTICULOS, PAGADO_EN, NOTAS FROM VENTATICKETS WHERE PAGADO_EN like ?;'
+        rows = sqlite3_query(query=sql, params=[f'{day}%'])
 
-    sql = 'SELECT PRODUCTO_CODIGO, PRODUCTO_NOMBRE, CANTIDAD, PRECIO_USADO FROM VENTATICKETS_ARTICULOS WHERE TICKET_ID = ?;'
-    ticketsInfo = {}
+        sql = 'SELECT PRODUCTO_CODIGO, PRODUCTO_NOMBRE, CANTIDAD, PRECIO_USADO FROM VENTATICKETS_ARTICULOS WHERE TICKET_ID = ?;'
+        ticketsInfo = {}
 
-    for row in rows:
-        ticketID = row[0]
-        ticketsInfo[ticketID] = sqlite3_query(query=sql, params=[ticketID])
-
-    for key in ticketsInfo:
-        print(key, ticketsInfo[key])
-        
-    return
+        for row in rows:
+            ticketID = row[0]
+            ticketsInfo[ticketID] = sqlite3_query(query=sql, params=[ticketID])
+            
+        return jsonify({'tickets': ticketsInfo})
+    except Exception as e:
+        return jsonify({'tickets': 'FALLIDO'})
 
 
 @app.route('/print/ticket', methods=['GET'])

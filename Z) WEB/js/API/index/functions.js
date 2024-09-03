@@ -47,7 +47,6 @@ function manageKeyPressed(event){
 };
 
 async function onLoadFunction(){
-    fullScreenRequest();
     //Focus a introducir productos
     inputSearchProduct.focus()
 
