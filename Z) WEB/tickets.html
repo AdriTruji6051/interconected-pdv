@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tickets</title>
+    <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css">
+</head>
+<body>
+    <div class="row container-fluid">
+        <div id="form-search-tickets" class="col-xl-6 col-lg-6 col-12 p-5">
+            <div class="card">
+                <div class="card-header">
+                  Buscar tickets
+                </div>
+                <div class="card-body" >
+                    <h5 class="card-title">Obtener los tickets del dia:</h5>
+                    <form>
+                        <label for="date">Selecciona una fecha:</label>
+                        <input type="date" id="date">
+                    </form>
+
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Folio</th>
+                                <th scope="col">Total</th>
+                                <th scope="col">Articulos</th>
+                                <th scope="col">Hora</th>                              
+                            </tr>
+                        </thead>
+                        <tbody id="table-body-tickets">
+
+                        </tbody>
+                    </table>
+                </div>
+              </div>
+        </div>
+    
+        <div id="tickets-prev" class="col-xl-6 col-lg-6 col-12 p-5">
+            <div class="card">
+                <div class="card-header">
+                  Tickets del dia: 
+                </div>
+                <div class="card-body" >
+                  <h5 class="card-title">Special title treatment</h5>
+                  <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+                </div>
+              </div>
+        </div>
+    </div>
+
+    <script src="js/API/main.js"></script>
+    <script src="js/API/consultas.js"></script>
+    <script src="js/API/tickets_view/tickets_view.js"></script>
+</body>
+</html>

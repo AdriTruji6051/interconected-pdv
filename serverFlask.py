@@ -304,7 +304,17 @@ def getTicketDay():
 
         for row in rows:
             ticketID = row[0]
-            ticketsInfo[ticketID] = sqlite3_query(query=sql, params=[ticketID])
+            date = row[5].split(' ')[1]
+            ticketsInfo[ticketID] = {
+                'id': row[0],
+                'folio': row[1],
+                'total': row[2],
+                'pago_con': row[3],
+                'articulos': row[4],
+                'hour': date,
+                'notes': row[6],
+                'productos': sqlite3_query(query=sql, params=[ticketID]),
+            } 
             
         return jsonify({'tickets': ticketsInfo})
     except Exception as e:
