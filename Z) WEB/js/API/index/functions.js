@@ -1,7 +1,7 @@
 //JS para las funciones llamadas desde el archivo principal 'punto-de-venta'
 function manageKeyPressed(event){
     const regex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ0-9¡!¿?.,:;()@#$%^&*_~\[\]\{\} ]*$/;
-    var key = event.key;
+    const key = event.key;
 
     if(key === 'Delete'){
         deleteProductFromBill();
@@ -51,22 +51,17 @@ async function onLoadFunction(){
     inputSearchProduct.focus()
 
     //Cargamos las impresoras disponibles
-    await fetch(`http://${SERVERIP}:5000/get/printers`)
-    .then(response => response.json())
-    .then(data => {
-        const printers = data.printers;
-        var isFirst = true;
-        
-        printers.forEach(printer => {
-            const printOption = document.createElement('option');
-            if(isFirst) printOption.selected = true;
-            printOption.value = printer;
-            printOption.innerText = printer;
-            selectPrinter.appendChild(printOption);
-            isFirst = false;
-        });
-    })
-    .catch(error => console.log(error));
+    var isFirst = true;
+    const printers = await get_printers();
+    
+    printers.forEach(printer => {
+        const printOption = document.createElement('option');
+        if(isFirst) printOption.selected = true;
+        printOption.value = printer;
+        printOption.innerText = printer;
+        selectPrinter.appendChild(printOption);
+        isFirst = false;
+    });
 };
 
 const update_product_on_bill = (product, numOfProd) => {
@@ -200,33 +195,6 @@ function submit_Bill(){
         document.getElementById('complete-ticket-bill').innerText = `Cobrar: $ ${total}`;
         document.getElementById('cantity-of-change').innerText = '$ 0.00';
     }else alert('Cuenta vacia!...')
-}
-
-async function submit_ticket(bill, change = 0 , notes = '' ,printerName, willPrint = true) {
-    const url = `http://${SERVERIP}:5000/print/new/ticket`
-
-    const ticket = {
-        print: willPrint,
-        products: bill,
-        printerName: printerName,
-        change: change,
-        notes: notes,
-    }
-
-    await fetch(url, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(ticket)
-    })
-    .then(response => response.json())
-    .then(data => {
-        console.log(data.impresion)
-    })
-    .catch((error) => {
-        console.log(error);
-    });
 };
 
 function collectTheBill(event){
@@ -245,7 +213,7 @@ function collectTheBill(event){
         calculateTotalBill(productsOnBill);
         alert('Cobro realizado!...');
     }else alert('Cuenta vacia!...');
-}
+};
 
 function isToolEnabled(){
     //Añadir los elementos divs que alguna vez se ocultaran
@@ -260,7 +228,7 @@ function isToolEnabled(){
     });
 
     return isEnabled;
-}
+};
 
 //Fullscreen options
 var isFullScreen = true;

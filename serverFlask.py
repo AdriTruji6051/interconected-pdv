@@ -312,18 +312,55 @@ def getTicketDay():
                 'pago_con': row[3],
                 'articulos': row[4],
                 'hour': date,
-                'notes': row[6],
+                'notes': row[6] if type(row[6]) != bytes else row[6].decode(encoding="utf-8"),
                 'productos': sqlite3_query(query=sql, params=[ticketID]),
             } 
             
         return jsonify({'tickets': ticketsInfo})
     except Exception as e:
+        print(e)
         return jsonify({'tickets': 'FALLIDO'})
 
 
-@app.route('/print/ticket', methods=['GET'])
+@app.route('/print/ticket', methods=['POST'])
 def rePrintTicket():
-    return
+    try:
+        data = request.get_json()
+        if data is None:
+            return jsonify({'error': 'No se recibió ningún JSON'}), 400
+        
+        ticket_id = data.get('id')
+        printerName = data.get('printerName')
+        
+
+        #Obtenemos la informacion general del ticket
+        sql = 'SELECT TOTAL, PAGO_CON, NOTAS, NUMERO_ARTICULOS, PAGADO_EN FROM VENTATICKETS WHERE ID = ?;'
+        rows = sqlite3_query(query=sql, params=[ticket_id])[0]
+        totalBill = rows[0]
+        paidWith = rows[1]
+        notes = rows[2]
+
+        #Obtenemos los productos que se vendieron en ese ticket
+        sql = 'SELECT PRODUCTO_CODIGO, PRODUCTO_NOMBRE, PRECIO_USADO, CANTIDAD FROM VENTATICKETS_ARTICULOS WHERE TICKET_ID = ?;'
+        rows = sqlite3_query(query=sql, params=[ticket_id])
+
+        products = {}
+        for row in rows:
+            products[row[0]] = {
+                'DESCRIPCION': row[1],
+                'PVENTA': row[2],
+                'CANTIDAD': row[3],
+                'IMPORTE': row[2] * row[3],
+            }
+
+        ticketStruct = create_ticket_struct(products = products,change = paidWith - totalBill, notes = notes)
+
+        return jsonify({'impresion': 'Correctamente!'}), 200
+    except Exception as e:
+        print(e)
+        return jsonify({'impresion': 'Error!'})
+
+
 
 #Fin de rutas de la API
 def openHTML():

@@ -4,64 +4,116 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Productos</title>
-    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css">
+    <link rel="stylesheet" href="css/styles_PDV.css">
 </head>
 <body>
-    
-    <h1>Agregar o actualizar un producto</h1>
-    <form id="insertProductForm">
-        <label for="codigo">Código:</label>
-        <input type="text" id="codigo" name="codigo" required><br><br>
 
-        <label for="descripcion">Descripción:</label>
-        <input type="text" id="descripcion" name="descripcion" required><br><br>
+    <!-- INICIO CARD CREATE -->
+    <div class="card m-5">
+        <div class="card-header">
+            <h5 class="mb-0">
+                <button class="btn btn-primary-color" type="button" data-bs-toggle="collapse" data-bs-target="#create-product" aria-expanded="true" aria-controls="create-product">
+                    Añadir Producto ->
+                </button>
+            </h5>
+        </div>
 
-        <label for="pcosto">Precio Costo:</label>
-        <input type="number" id="pcosto" name="pcosto" step="0.01"><br><br>
+        <div id="create-product" class="collapse show row" >
+             <!-- Inicio CREATE Form -->
+            <div class="col-xl-6 col-lg-6 col-12 p-5" >
+                <h1>Agregar o actualizar un producto</h1>
+                <form id="insertProductForm">
+                    <label for="codigo">Código:</label>
+                    <input type="text" id="codigo" name="codigo" required><br><br>
+            
+                    <label for="descripcion">Descripción:</label>
+                    <input type="text" id="descripcion" name="descripcion" required><br><br>
+            
+                    <label for="pcosto">Precio Costo:</label>
+                    <input type="number" id="pcosto" name="pcosto" step="0.01"><br><br>
+            
+                    <label for="pventa">Precio Venta:</label>
+                    <input type="number" id="pventa" name="pventa" step="0.01" required><br><br>
+            
+                    <label for="mayoreo">Precio Mayoreo:</label>
+                    <input type="number" id="mayoreo" name="mayoreo" step="0.01" ><br><br>
+            
+                    <label for="porcentaje_ganancia">Porcentaje de Ganancia (%):</label>
+                    <input type="number" id="porcentaje_ganancia" name="porcentaje_ganancia" value="20"><br><br>
+            
+                    <label for="dept">Departamento:</label>
+                    <input type="number" id="dept" name="dept" ><br><br>
+            
+                    <label for="tipoVenta">¿Es a granel?:</label>
+                    <input type="checkbox" id="tipoVenta" name="tipoVenta"><br><br>
+            
+                    <legend>Inventario</legend>
+                    <label for="usaInventario">¿Usa inventario?:</label>
+                    <input type="checkbox" id="usaInventario" name="usaInventario"><br><br>
+            
+                    <section id="inventario" hidden>
+                        <label for="dinventario">Actualmente en inventario:</label>
+                        <input type="number" id="dinventario" name="dinventario" disabled><br><br>
+                
+                        <label for="dinvminimo">Minimo en inventario (avisar cuando haya menos de):</label>
+                        <input type="number" id="dinvminimo" name="dinvminimo" disabled><br><br>
+                    </section>
+            
+                    <input type="submit" value="Agregar Producto">
+                </form>
+            </div>
+            <!-- Final CREATE Form -->
 
-        <label for="pventa">Precio Venta:</label>
-        <input type="number" id="pventa" name="pventa" step="0.01" required><br><br>
+            <!-- Inicio CREATE Form utilidades-->
+            <div class="col-xl-6 col-lg-6 col-12 p-5">
+                <div class="card">
+                    <div class="card-body">
+                    This is some text within a card body.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- FINAL CARD CREATE -->
 
-        <label for="mayoreo">Precio Mayoreo:</label>
-        <input type="number" id="mayoreo" name="mayoreo" step="0.01" ><br><br>
+    <div class="card m-5">
+        <div class="card-header">
+            <h5 class="mb-0">
+                <button class="btn btn-primary-color" type="button" data-bs-toggle="collapse" data-bs-target="#delete-product" aria-expanded="true" aria-controls="delete-product">
+                    Eliminar Producto ->
+                </button>
+            </h5>
+        </div>
 
-        <label for="porcentaje_ganancia">Porcentaje de Ganancia (%):</label>
-        <input type="number" id="porcentaje_ganancia" name="porcentaje_ganancia" value="20"><br><br>
+        <div id="delete-product" class="collapse row" >
+             <!-- Inicio CREATE Form -->
+            <div class="col-xl-6 col-lg-6 col-12 p-5" >
+                <h1>Eliminar producto</h1>
+                <form id="deleteProductForm">
+                    <label for="codigo">Código:</label>
+                    <input type="text" id="codigo" name="codigo" required><br><br>
+            
+                    <p id="vistaPrevia">Vista previa: </p>
+            
+                    <input type="submit" value="Eliminar Producto">
+                </form>
+            </div>
+            <!-- Final CREATE Form -->
 
-        <label for="dept">Departamento:</label>
-        <input type="number" id="dept" name="dept" ><br><br>
-
-        <label for="tipoVenta">¿Es a granel?:</label>
-        <input type="checkbox" id="tipoVenta" name="tipoVenta"><br><br>
-
-        <legend>Inventario</legend>
-        <label for="usaInventario">¿Usa inventario?:</label>
-        <input type="checkbox" id="usaInventario" name="usaInventario"><br><br>
-
-        <section id="inventario" hidden>
-            <label for="dinventario">Actualmente en inventario:</label>
-            <input type="number" id="dinventario" name="dinventario" disabled><br><br>
-    
-            <label for="dinvminimo">Minimo en inventario (avisar cuando haya menos de):</label>
-            <input type="number" id="dinvminimo" name="dinvminimo" disabled><br><br>
-        </section>
-
-        <input type="submit" value="Agregar Producto">
-    </form>
-
-    <br><br>
-    <h1>Eliminar producto</h1>
-    <form id="deleteProductForm">
-        <label for="codigo">Código:</label>
-        <input type="text" id="codigo" name="codigo" required><br><br>
-
-        <p id="vistaPrevia">Vista previa: </p>
-
-        <input type="submit" value="Eliminar Producto">
-    </form>
+            <!-- Inicio CREATE Form utilidades-->
+            <div class="col-xl-6 col-lg-6 col-12 p-5">
+                <div class="card">
+                    <div class="card-body">
+                    This is some text within a card body.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script src="js/API/main.js"></script>
     <script src="js/API/productCRUD.js"></script>
-    <script src="js/bootstrap.bundle.min.js"></script>
+    <script src="js/bootsrap/bootstrap.bundle.min.js"></script>
 </body>
 </html>

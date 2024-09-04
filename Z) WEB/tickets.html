@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tickets</title>
     <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css">
+    <link rel="stylesheet" href="css/styles_PDV.css">
 </head>
 <body>
     <div class="row container-fluid">
@@ -34,17 +35,35 @@
                         </tbody>
                     </table>
                 </div>
+                <br>
+                <a href="./index.html" class="btn btn-outline-color">Abrir punto de venta</a>
               </div>
         </div>
     
-        <div id="tickets-prev" class="col-xl-6 col-lg-6 col-12 p-5">
+        <div id="ticket-prev-div" class="col-xl-6 col-lg-6 col-12 p-5">
             <div class="card">
                 <div class="card-header">
-                  Tickets del dia: 
+                  Ticket: 
                 </div>
-                <div class="card-body" >
-                  <h5 class="card-title">Special title treatment</h5>
-                  <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+                <div class="card-body" id="ticket-prev">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Cantidad</th>
+                                <th scope="col">Producto</th>
+                                <th scope="col">Importe</th>                            
+                            </tr>
+                        </thead>
+                        <tbody id="ticket-prev-table">
+
+                        </tbody>
+                    </table>
+                    <div class="ticket-options d-flex flex-row p-1 m-1">
+                        <button class="btn btn-primary-color" id="btn-reprint">Reimprimir ticket</button>
+                        <select id="select-printer" class="form-select mx-5" aria-label="Default select example" style="max-width: 50%;">
+                            <option value="">Elegir impresora</option>
+                        </select>
+                    </div>
                 </div>
               </div>
         </div>
