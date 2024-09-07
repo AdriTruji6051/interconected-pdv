@@ -202,8 +202,7 @@ function collectTheBill(event){
 
     if(Object.keys(productsOnBill).length > 0){
         const notes = document.getElementById('notes-for-sell').value;
-        submit_ticket(productsOnBill, inputChange.value, notes, selectPrinter.value, false);
-
+        submit_ticket(productsOnBill, inputChange.value, notes, selectPrinter.value, true);
         //Esto es inutil pq se reinicia, xd
         ticketSubmitDiv.hidden = true;
         productsOnBill = {};

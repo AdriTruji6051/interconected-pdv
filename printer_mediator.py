@@ -10,10 +10,10 @@ def list_printers() -> list:
     
     return avaliable_printers
 
-def create_ticket_struct(products, change, notes):
+def create_ticket_struct(products, change, notes, date):
     try:
         total_local = 0
-        TICKET_TXT = 'Tel: 373 734 9861#-#Cel: 33 1076 7498#-#'
+        TICKET_TXT = str(f' Tel: 373 734 9861#-#    Cel: 33 1076 7498#-#    {date}#-#')
 
         if type(notes) != bool: TICKET_TXT += notes + '#-##-#----------------------------------------------->#-#' 
         else: TICKET_TXT += '#-#----------------------------------------------->#-#'
@@ -27,9 +27,10 @@ def create_ticket_struct(products, change, notes):
 
             TICKET_TXT += str(CANTIDAD) + ' ' + str(DESCRIPCION) + '    ' + str(IMPORTE) + '#-# '
         
-        #TICKET_TXT += str(f'----------------------------------------------->#-##-#Total: {total_local} {'#-#Cambio:' + str(float(change) - float(total_local)) if change else ''}')
-        TICKET_TXT += str(f'----------------------------------------------->#-##-#Total: {total_local} #-##-#Gracias por su compra!...')
-        #TICKET_TXT += str(f'#-#Cambio:  {float(change) - float(total_local)}') if change else ' '
+        TICKET_TXT += str(f'----------------------------------------------->#-##-#Total: {total_local}')
+        TICKET_TXT += str(f'#-#Cambio:  {change}') if change else ' '
+        TICKET_TXT += '#-##-#Gracias por su compra!...'
+
         return TICKET_TXT
     except Exception as e:
         print(e)

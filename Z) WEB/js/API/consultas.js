@@ -32,7 +32,7 @@ async function get_printers() {
     return printers;
 }
 
-async function submit_ticket(bill, change = 0 , notes = '' ,printerName, willPrint = true) {
+async function submit_ticket(bill = {}, change = 0 , notes = '' ,printerName = '', willPrint = true) {
     const url = `http://${SERVERIP}:5000/print/new/ticket`
 
     const ticket = {

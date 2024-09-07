@@ -11,11 +11,9 @@
 
     <!-- INICIO CARD CREATE -->
     <div class="card m-5">
-        <div class="card-header">
+        <div class="card-header" data-bs-toggle="collapse" data-bs-target="#create-product" aria-expanded="true" aria-controls="create-product">
             <h5 class="mb-0">
-                <button class="btn btn-outline-color" type="button" data-bs-toggle="collapse" data-bs-target="#create-product" aria-expanded="true" aria-controls="create-product">
-                    Añadir Producto ->
-                </button>
+                Agregar o actualizar producto <i class="fa-solid fa-angles-down mx-2"></i>
             </h5>
         </div>
 
@@ -24,30 +22,53 @@
             <div class="col-xl-6 col-lg-6 col-12 p-5" >
                 <h4>Agregar o actualizar un producto</h4>
                 <form id="insertProductForm" class="col-xl-10 col-lg-10 col-md-7 col-12">
+
                     <label for="codigo" class="form-label">Código</label>
-                    <input type="text" id="codigo" name="codigo" class="form-control mb-3" required>
-            
+                    <div class="input-group input-group-sm mb-3">
+                        <span class="input-group-text" id="inputGroup-sizing-sm"><i class="fa-solid fa-barcode"></i></span>
+                        <input type="text" id="codigo" name="codigo" class="form-control form-control-sm" required>
+                    </div>
+                       
                     <label for="descripcion" class="form-label">Descripción</label>
-                    <input type="text" id="descripcion" name="descripcion" class="form-control mb-3" required>
+                    <div class="input-group input-group-sm mb-3">
+                        <span class="input-group-text" id="inputGroup-sizing-sm"><i class="fa-solid fa-font"></i></span>
+                        <input type="text" id="descripcion" name="descripcion" class="form-control form-control-sm" required>
+                    </div>
             
                     <label for="pcosto" class="form-label">Precio Costo</label>
-                    <input type="number" id="pcosto" name="pcosto" step="0.01" class="form-control mb-3">
+                    <div class="input-group input-group-sm mb-3">
+                        <span class="input-group-text" id="inputGroup-sizing-sm"><i class="fa-solid fa-dollar-sign"></i></span>
+                        <input type="number" id="pcosto" name="pcosto" step="0.01"  min="0" class="form-control form-control-sm">
+                    </div>
             
                     <label for="pventa" class="form-label">Precio Venta</label>
-                    <input type="number" id="pventa" name="pventa" step="0.01" class="form-control mb-3" required>
+                    <div class="input-group input-group-sm mb-3">
+                        <span class="input-group-text" id="inputGroup-sizing-sm"><i class="fa-solid fa-dollar-sign"></i></span>
+                        <input type="number" id="pventa" name="pventa" step="0.01" min="0" class="form-control form-control-sm" required>
+                    </div>
             
                     <label for="mayoreo" class="form-label">Precio Mayoreo</label>
-                    <input type="number" id="mayoreo" name="mayoreo" step="0.01" class="form-control mb-3">
-            
+                    <div class="input-group input-group-sm mb-3">
+                        <span class="input-group-text" id="inputGroup-sizing-sm"><i class="fa-solid fa-tag"></i></span>
+                        <input type="number" id="mayoreo" name="mayoreo" step="0.01" min="0" class="form-control form-control-sm">
+                    </div>
+                                
                     <label for="porcentaje_ganancia" class="form-label">Porcentaje de Ganancia</label>
-                    <input type="number" id="porcentaje_ganancia" name="porcentaje_ganancia" value="20" class="form-control mb-3">
+                    <div class="input-group input-group-sm mb-3">
+                        <span class="input-group-text" id="inputGroup-sizing-sm"><i class="fa-solid fa-percent"></i></span>
+                        <input type="number" id="porcentaje_ganancia" name="porcentaje_ganancia" value="20" min="0" class="form-control form-control-sm">
+                    </div>
+                    
             
                     <label for="dept" class="form-label" >Departamento</label>
-                    <input type="number" id="dept" name="dept"class="form-control mb-3" >
+                    <div class="input-group input-group-sm mb-3">
+                        <span class="input-group-text" id="inputGroup-sizing-sm"><i class="fa-solid fa-filter"></i></span>
+                        <input type="number" id="dept" name="dept" min="0" class="form-control form-control-sm" >
+                    </div>
                     
                     <div class="form-check form-switch">
                         <input type="checkbox" id="tipoVenta" name="tipoVenta" class="form-check-input" role="switch">
-                        <label for="tipoVenta" class="form-check-label mb-3">¿Es a granel?</label>
+                        <label for="tipoVenta" class="form-check-label ">¿Es a granel?</label>
                     </div>
 
                     <legend>Inventario</legend>
@@ -60,10 +81,10 @@
             
                     <section id="inventario" hidden>
                         <label for="dinventario" class="form-label">Actualmente en inventario</label>
-                        <input type="number" id="dinventario" name="dinventario" class="form-control mb-3" disabled>
+                        <input type="number" id="dinventario" name="dinventario" class="form-control form-control-sm mb-3" disabled>
                 
                         <label for="dinvminimo" class="form-label">Minimo en inventario (avisar cuando haya menos de)</label>
-                        <input type="number" id="dinvminimo" name="dinvminimo" class="form-control mb-3" disabled>
+                        <input type="number" id="dinvminimo" name="dinvminimo" class="form-control form-control-sm mb-3" disabled>
                     </section>
             
                     <input type="submit" value="Agregar Producto" class="btn btn-primary-color">
@@ -75,7 +96,7 @@
             <div class="col-xl-6 col-lg-6 col-12 p-5">
                 <div class="card">
                     <div class="card-body">
-                    This is some text within a card body.
+                    Seguimos trabajando aqui!...
                     </div>
                 </div>
             </div>
@@ -111,7 +132,7 @@
             <div class="col-xl-6 col-lg-6 col-12 p-5">
                 <div class="card">
                     <div class="card-body">
-                    This is some text within a card body.
+                        Seguimos trabajando aqui!...
                     </div>
                 </div>
             </div>
@@ -121,5 +142,6 @@
     <script src="js/API/main.js"></script>
     <script src="js/API/productCRUD.js"></script>
     <script src="js/bootsrap/bootstrap.bundle.min.js"></script>
+    <script src="https://kit.fontawesome.com/66cd4be8be.js" crossorigin="anonymous"></script>
 </body>
 </html>

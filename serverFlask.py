@@ -6,6 +6,8 @@ import threading
 import json
 from printer_mediator import list_printers, print_ticket, create_ticket_struct
 import sqlite3
+import requests
+import socket
 
 app = Flask(__name__)
 CORS(app, supports_credentials=True)
@@ -149,6 +151,7 @@ def insertProduct():
             return jsonify({'error': 'No se recibió ningún JSON'}), 400
 
         params = parse_paramas_to_array(data)
+
         sql = 'INSERT INTO PRODUCTOS (CODIGO, DESCRIPCION, TVENTA, PCOSTO, PVENTA, DEPT, MAYOREO, IPRIORIDAD, DINVENTARIO, DINVMINIMO, DINVMAXIMO, CHECADO_EN, PORCENTAJE_GANANCIA) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)'
         sqlite3_query(query= sql, params = params, commit= True)
 
@@ -164,8 +167,12 @@ def updateProduct():
         data = request.get_json()
         if data is None:
             return jsonify({'error': 'No se recibió ningún JSON'}), 400
-
+        
+        #codigo esta al principio, lo movemos al final
         params = parse_paramas_to_array(data)
+        params.append(params.pop(0))
+        print(params)
+
         sql = 'UPDATE PRODUCTOS SET DESCRIPCION = ?, TVENTA = ?, PCOSTO = ?, PVENTA = ?, DEPT = ?, MAYOREO = ?, IPRIORIDAD = ?, DINVENTARIO = ?, DINVMINIMO = ?, DINVMAXIMO = ?, CHECADO_EN = ?, PORCENTAJE_GANANCIA = ? WHERE CODIGO = ?;'
         sqlite3_query(query= sql, params = params, commit= True)
 
@@ -216,15 +223,16 @@ def createTicket():
         paidWith = float(data.get('change'))
         notes = data.get('notes')
         totalBill = calculate_total_bill(products)
+        date = datetime.now()
 
-        ticketStruct = create_ticket_struct(products = products,change = paidWith - totalBill, notes = notes)
+        ticketStruct = create_ticket_struct(products = products,change = paidWith - totalBill, notes = notes, date=date.strftime('%Y-%m-%d %H:%M:%S'))
 
         if willPrint : print_ticket(ticketStruct,printerName)
 
         #AQUI DEBEMOS CREAR LA ESTRUCTURA DEL TICKET Y GUARDARLO EN LA BD
         sql = 'SELECT MAX(ID), MAX(FOLIO) FROM VENTATICKETS'
         res = sqlite3_query(query = sql)
-        date = datetime.now()
+        
 
         for row in res:
             res = row
@@ -339,6 +347,7 @@ def rePrintTicket():
         totalBill = rows[0]
         paidWith = rows[1]
         notes = rows[2]
+        date = rows[4]
 
         #Obtenemos los productos que se vendieron en ese ticket
         sql = 'SELECT PRODUCTO_CODIGO, PRODUCTO_NOMBRE, PRECIO_USADO, CANTIDAD FROM VENTATICKETS_ARTICULOS WHERE TICKET_ID = ?;'
@@ -353,8 +362,8 @@ def rePrintTicket():
                 'IMPORTE': row[2] * row[3],
             }
 
-        ticketStruct = create_ticket_struct(products = products,change = paidWith - totalBill, notes = notes)
-
+        ticketStruct = create_ticket_struct(products = products,change = paidWith - totalBill, notes = notes, date=date)
+        print_ticket(text=ticketStruct, printer_name=printerName)
         return jsonify({'impresion': 'Correctamente!'}), 200
     except Exception as e:
         print(e)

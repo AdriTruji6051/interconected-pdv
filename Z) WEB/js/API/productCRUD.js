@@ -1,5 +1,6 @@
 const insertForm = document.getElementById('insertProductForm');
-const deleteForm = document.getElementById('deleteProductForm')
+const deleteForm = document.getElementById('deleteProductForm');
+
 const inputCodigo = document.getElementById('codigo');
 const inputDescripcion = document.getElementById('descripcion');
 const inputPcosto = document.getElementById('pcosto');
@@ -13,6 +14,9 @@ const inputDinventario = document.getElementById('dinventario');
 const inputDinvminimo = document.getElementById('dinvminimo');
 const sectionInventario = document.getElementById('inventario');
 
+const today = new Date().toISOString().split('T')[0];
+
+//Trackear actualizaciones
 var updateProductoCodigo = '';
 
 //Cuando carge el documento vemos si recibimos datos sobre la ultima incersion para notificar si se hizo el cambio correctamente
@@ -33,6 +37,14 @@ try{
 }catch (error){
     console.log(error)
 }
+
+inputPcosto.addEventListener('input', function(){
+    inputPventa.value = parseFloat(inputPcosto.value) + inputPcosto.value * (inputPorcentajeGanancia.value / 100);
+});
+
+inputPorcentajeGanancia.addEventListener('input', function(){
+    inputPventa.value = parseFloat(inputPcosto.value) + inputPcosto.value * (inputPorcentajeGanancia.value / 100);
+});
 
 
 async function isProductOn(){
@@ -85,17 +97,17 @@ insertForm.addEventListener('submit', function(event){
     event.preventDefault();
 
     // Capturar los datos del formulario
-    const codigo = document.getElementById('codigo').value;
-    const descripcion = document.getElementById('descripcion').value;
-    const pcosto = document.getElementById('pcosto').value;
-    const pventa = document.getElementById('pventa').value;
-    const mayoreo = document.getElementById('mayoreo').value;
-    const porcentaje_ganancia = document.getElementById('porcentaje_ganancia').value;
-    const dept = document.getElementById('dept').value;
-    const tipoVenta = document.getElementById('tipoVenta').checked ? 'D' : 'U'; // true o false
-    const usaInventario = document.getElementById('usaInventario').checked; // true o false
-    var inventarioActual = document.getElementById('dinventario').value;
-    var inventarioMinimo = document.getElementById('dinvminimo').value;
+    const codigo = inputCodigo.value;
+    const descripcion = inputDescripcion.value;
+    const pcosto = inputPcosto.value;
+    const pventa = inputPventa.value;
+    const mayoreo = inputMayoreo.value;
+    const porcentaje_ganancia = inputPorcentajeGanancia.value;
+    const dept = inputDept.value;
+    const tipoVenta = inputTipoVenta.checked ? 'D' : 'U'; // true o false
+    const usaInventario = inputUsaInventario.checked; // true o false
+    var inventarioActual = inputDinventario.value;
+    var inventarioMinimo = inputDinvminimo.value;
 
     if(!usaInventario){
         inventarioActual = -1;
@@ -115,7 +127,7 @@ insertForm.addEventListener('submit', function(event){
         inventarioActual: inventarioActual,
         inventarioMinimo: inventarioMinimo,
         inventarioMaximo: null,
-        checadoEn: null,
+        checadoEn: today,
         porcentaje_ganancia: porcentaje_ganancia,
     }
 
@@ -124,6 +136,7 @@ insertForm.addEventListener('submit', function(event){
     //Si se consigio un codigo reafirmamos si sigue siendo el mismo para hacer un update en vez de insert
     if(updateProductoCodigo === inputCodigo.value){
         url = `http://${SERVERIP}:5000/update/product`
+        alert('update')
     }
 
     fetch(url, {
@@ -140,6 +153,7 @@ insertForm.addEventListener('submit', function(event){
     })
     .catch((error) => {
         console.error('Error:', error);
+        alert('Error al ingresar los datos')
     });
     
 });
