@@ -22,63 +22,74 @@
             <div class="col-xl-6 col-lg-6 col-12 p-5" >
                 <h4>Agregar o actualizar un producto</h4>
                 <form id="insertProductForm" class="col-xl-10 col-lg-10 col-md-7 col-12">
-
                     <label for="codigo" class="form-label">Código</label>
                     <div class="input-group input-group-sm mb-3">
-                        <span class="input-group-text" id="inputGroup-sizing-sm"><i class="fa-solid fa-barcode"></i></span>
-                        <input type="text" id="codigo" name="codigo" class="form-control form-control-sm" required>
+                        <span class="input-group-text" id="inputGroup-sizing-sm">
+                            <i class="fa-solid fa-barcode"></i>
+                        </span>
+                        <input type="text" id="codigo" name="codigo" class="form-control form-control-sm" required tabindex="1">
                     </div>
                        
                     <label for="descripcion" class="form-label">Descripción</label>
                     <div class="input-group input-group-sm mb-3">
-                        <span class="input-group-text" id="inputGroup-sizing-sm"><i class="fa-solid fa-font"></i></span>
-                        <input type="text" id="descripcion" name="descripcion" class="form-control form-control-sm" required>
+                        <span class="input-group-text" id="inputGroup-sizing-sm">
+                            <i class="fa-solid fa-font"></i>
+                        </span>
+                        <input type="text" id="descripcion" name="descripcion" class="form-control form-control-sm" required tabindex="2">
                     </div>
-            
+                
                     <label for="pcosto" class="form-label">Precio Costo</label>
                     <div class="input-group input-group-sm mb-3">
-                        <span class="input-group-text" id="inputGroup-sizing-sm"><i class="fa-solid fa-dollar-sign"></i></span>
-                        <input type="number" id="pcosto" name="pcosto" step="0.01"  min="0" class="form-control form-control-sm">
+                        <span class="input-group-text" id="inputGroup-sizing-sm">
+                            <i class="fa-solid fa-dollar-sign"></i>
+                        </span>
+                        <input type="number" id="pcosto" name="pcosto" step="0.01" min="0" class="form-control form-control-sm" tabindex="3">
                     </div>
-            
+                
                     <label for="pventa" class="form-label">Precio Venta</label>
                     <div class="input-group input-group-sm mb-3">
-                        <span class="input-group-text" id="inputGroup-sizing-sm"><i class="fa-solid fa-dollar-sign"></i></span>
-                        <input type="number" id="pventa" name="pventa" step="0.01" min="0" class="form-control form-control-sm" required>
+                        <span class="input-group-text" id="inputGroup-sizing-sm">
+                            <i class="fa-solid fa-dollar-sign"></i>
+                        </span>
+                        <input type="number" id="pventa" name="pventa" step="0.01" min="0" class="form-control form-control-sm" required tabindex="4">
                     </div>
-            
+                
                     <label for="mayoreo" class="form-label">Precio Mayoreo</label>
                     <div class="input-group input-group-sm mb-3">
-                        <span class="input-group-text" id="inputGroup-sizing-sm"><i class="fa-solid fa-tag"></i></span>
-                        <input type="number" id="mayoreo" name="mayoreo" step="0.01" min="0" class="form-control form-control-sm">
+                        <span class="input-group-text" id="inputGroup-sizing-sm">
+                            <i class="fa-solid fa-tag"></i>
+                        </span>
+                        <input type="number" id="mayoreo" name="mayoreo" step="0.01" min="0" class="form-control form-control-sm" tabindex="5">
                     </div>
-                                
+                
                     <label for="porcentaje_ganancia" class="form-label">Porcentaje de Ganancia</label>
                     <div class="input-group input-group-sm mb-3">
-                        <span class="input-group-text" id="inputGroup-sizing-sm"><i class="fa-solid fa-percent"></i></span>
-                        <input type="number" id="porcentaje_ganancia" name="porcentaje_ganancia" value="20" min="0" class="form-control form-control-sm">
+                        <span class="input-group-text" id="inputGroup-sizing-sm">
+                            <i class="fa-solid fa-percent"></i>
+                        </span>
+                        <input type="number" id="porcentaje_ganancia" name="porcentaje_ganancia" value="20" min="0" class="form-control form-control-sm" tabindex="6">
                     </div>
                     
-            
-                    <label for="dept" class="form-label" >Departamento</label>
+                    <label for="dept" class="form-label">Departamento</label>
                     <div class="input-group input-group-sm mb-3">
-                        <span class="input-group-text" id="inputGroup-sizing-sm"><i class="fa-solid fa-filter"></i></span>
-                        <input type="number" id="dept" name="dept" min="0" class="form-control form-control-sm" >
+                        <span class="input-group-text" id="inputGroup-sizing-sm">
+                            <i class="fa-solid fa-filter"></i>
+                        </span>
+                        <input type="number" id="dept" name="dept" min="0" class="form-control form-control-sm" tabindex="7">
                     </div>
-                    
+                
                     <div class="form-check form-switch">
-                        <input type="checkbox" id="tipoVenta" name="tipoVenta" class="form-check-input" role="switch">
-                        <label for="tipoVenta" class="form-check-label ">¿Es a granel?</label>
+                        <input type="checkbox" id="tipoVenta" name="tipoVenta" class="form-check-input" role="switch" tabindex="8">
+                        <label for="tipoVenta" class="form-check-label">¿Es a granel?</label>
                     </div>
-
+                
                     <legend>Inventario</legend>
-
+                
                     <div class="form-check form-switch">
-                        <input type="checkbox" id="usaInventario" name="usaInventario" class="form-check-input">
-                        <label for="usaInventario" class="form-label" class="form-check-label mb-3">¿Usa inventario?</label>
+                        <input type="checkbox" id="usaInventario" name="usaInventario" class="form-check-input" tabindex="9">
+                        <label for="usaInventario" class="form-label">¿Usa inventario?</label>
                     </div>
-
-            
+                
                     <section id="inventario" hidden>
                         <label for="dinventario" class="form-label">Actualmente en inventario</label>
                         <input type="number" id="dinventario" name="dinventario" class="form-control form-control-sm mb-3" disabled>
@@ -86,9 +97,9 @@
                         <label for="dinvminimo" class="form-label">Minimo en inventario (avisar cuando haya menos de)</label>
                         <input type="number" id="dinvminimo" name="dinvminimo" class="form-control form-control-sm mb-3" disabled>
                     </section>
-            
-                    <input type="submit" value="Agregar Producto" class="btn btn-primary-color">
-                </form>
+                
+                    <input type="submit" value="Agregar Producto" class="btn btn-primary-color" tabindex="12">
+                </form>                
             </div>
             <!-- Final CREATE Form -->
 

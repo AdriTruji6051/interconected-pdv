@@ -4,26 +4,16 @@ from flask_cors import CORS
 from datetime import datetime
 import threading
 import json
-from printer_mediator import list_printers, print_ticket
+from printer_mediator import  print_ticket
+from printer_service import run_printer_service
 import sqlite3
 import socket
 
 app = Flask(__name__)
 CORS(app, supports_credentials=True)
 
-#Obtenemos la ip local
-def get_local_ip():
-    # Crear una conexión a una dirección IP externa (no se enviará ningún dato)
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    try:
-        # Intentar conectarse a una IP pública (Google DNS en este caso)
-        s.connect(('8.8.8.8', 80))
-        local_ip = s.getsockname()[0]
-    except Exception as e:
-        local_ip = 'No se pudo obtener la IP'
-    finally:
-        s.close()
-    return local_ip
+#Variables globales 
+PRINTERS_ON_WEB = {}
 
 #Obtenemos las impresoras en el formato
 def get_printers(ipv4):
@@ -53,9 +43,6 @@ def send_ticket_to_printer(ticket_struct = '', printer = {}, open_drawer = False
     client_socket.close()
 
     return data.decode('utf-8')
-
-#Variables globales 
-PRINTERS_ON_WEB = get_printers(get_local_ip())
 
 #   Herramientas para las rutas del servidor
 def calculate_total_bill(products) -> float:
@@ -104,11 +91,9 @@ def create_ticket_struct(products, change, notes, date):
     except Exception as e:
         print(e)
 
-
-#import sqlite3
 def sqlite3_query(query, params = [], commit = False) -> list:
     res = []
-    conSQL = sqlite3.connect("./pchdata.sqlite3")
+    conSQL = sqlite3.connect("./DB/data_base.sqlite3")
     cursorSQL = conSQL.cursor()
     rows = cursorSQL.execute(query, params)
     for row in rows:
@@ -278,11 +263,8 @@ def initPc():
     try:
         client_ip = request.remote_addr
         client_printers = get_printers(ipv4=client_ip)
-        print(client_printers)
         global PRINTERS_ON_WEB
         PRINTERS_ON_WEB.update(client_printers)
-        print(PRINTERS_ON_WEB)
-        print('Equisde')
     except Exception as e:
         print(e)
     finally:
@@ -291,7 +273,16 @@ def initPc():
 #   TICKET PRINTER LOGIC
 @app.route('/get/printers', methods=['GET'])
 def getPrinters():
-    return jsonify({'printers': list(PRINTERS_ON_WEB.keys())})
+    printers = []
+    for key in PRINTERS_ON_WEB:
+        if PRINTERS_ON_WEB[key]['isdefault'] == True and PRINTERS_ON_WEB[key]['ipv4'] == request.remote_addr:
+            printers.insert(0, key)
+        elif PRINTERS_ON_WEB[key]['isdefault'] == True:
+            printers.append(key)
+        
+    
+    print(printers)
+    return jsonify({'printers': printers})
 
 #REFACTORIZAR LA SECCION DE TICKETS PARA QUE FUNCIONE CON LA VERSION DE RED
 @app.route('/print/new/ticket', methods=['POST'])
@@ -462,11 +453,13 @@ def openHTML():
     run(['index.html'], shell=False, creationflags=CREATE_NEW_CONSOLE)
 
 def startFlaskServer():
-    app.run(debug=False,host='localhost', port=5000)
+    app.run(debug=False,host='192.168.1.180', port=5000)
 
 if __name__ == '__main__':
+    printer_service = threading.Thread(target=run_printer_service)
     flaskServer = threading.Thread(target=startFlaskServer)
     html = threading.Thread(target=openHTML)
     
+    printer_service.start()
     flaskServer.start()
     #html.start()

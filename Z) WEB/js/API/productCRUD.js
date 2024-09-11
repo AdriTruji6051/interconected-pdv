@@ -184,6 +184,22 @@ deleteForm.addEventListener('submit', function(event) {
 });
 
 
+document.addEventListener('keydown', function(event) {
+    // Verificar si la tecla presionada es "Enter"
+    if (event.key === 'Enter') {
+        event.preventDefault(); // Evitar el comportamiento por defecto del Enter
+        const formElements = Array.from(document.querySelectorAll('#insertProductForm input, #myForm button'));
+
+        // Encontrar el índice del campo actual en el que está el foco
+        const currentIndex = formElements.findIndex(el => el === document.activeElement);
+
+        // Si hay un siguiente elemento, mover el foco
+        if (currentIndex !== -1 && currentIndex < formElements.length - 1) {
+            formElements[currentIndex + 1].focus();
+        }
+    }
+});
+
 
 inputUsaInventario.addEventListener('change', invStatus)
 

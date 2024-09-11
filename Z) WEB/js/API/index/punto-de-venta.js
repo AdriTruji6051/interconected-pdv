@@ -143,9 +143,7 @@ inputSearchProduct.addEventListener('keypress', function(event){
 });
 
 //Para cobranza
-document.getElementById('show-notes').addEventListener('click', function(){
-    document.getElementById('notes-for-sell-div').hidden = false;
-});
+document.getElementById('show-notes').addEventListener('click', hideOrShowNotes);
 
 //CHAMBEANDO AQUI **********************************
 commonArticleForm.addEventListener('submit', function(event){

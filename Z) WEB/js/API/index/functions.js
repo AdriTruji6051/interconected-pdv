@@ -25,6 +25,11 @@ function manageKeyPressed(event){
         inputSearchProduct.focus();
     }else if(key === 'F5'){
         event.preventDefault();
+    }else if(key === 'F4' && !ticketSubmitDiv.hidden){
+        hideOrShowNotes();
+    }else if(key === 'F1' && !ticketSubmitDiv.hidden){
+        event.preventDefault();
+        collectTheBill(event);
     }else if(key === 'ArrowDown' && isToolEnabled()){
         go_to_next_finded_product();
     }else if(key === 'ArrowUp' && isToolEnabled()){
@@ -216,6 +221,12 @@ function collectTheBill(event){
         alert('Cobro realizado!...');
     }else alert('Cuenta vacia!...');
 };
+
+function hideOrShowNotes(){
+    document.getElementById('notes-for-sell-div').hidden = !document.getElementById('notes-for-sell-div').hidden;
+    if (!document.getElementById('notes-for-sell-div').hidden) document.getElementById('notes-for-sell').focus();
+
+}
 
 function isToolEnabled(){
     //Añadir los elementos divs que alguna vez se ocultaran
