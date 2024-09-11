@@ -51,6 +51,8 @@
     --900-color: #801b40;
     --950-color: #470a1f; */
 
+    padding: 0%;
+    margin: 0%;
 }
 
 .legend img {
@@ -162,7 +164,6 @@
     background-color: var(--200-color);
     height: 17%;
 }
-
 
 @media (max-width: 992px){
     .legend {

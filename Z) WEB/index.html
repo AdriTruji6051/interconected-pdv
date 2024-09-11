@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css">
     <link rel="stylesheet" href="css/styles_PDV.css">
 </head>
-<body class="container-fluid">
+<body class="container-fluid" style="max-height: 100%; max-width: 100%;">
     <!-- Inicio navbar -->
     <nav class="navbar bg-body-tertiary navbar-expand-lg fixed-top holis" id="navbar">
         <div class="container-fluid" style="height: 50px;">
@@ -31,6 +31,10 @@
     
             <div class="offcanvas-body">
                 <ul class="navbar-nav justify-content-end flex-grow-1 pe-3 nav-bar-options">
+
+                <li class="nav-item">
+                    <a class="nav-link fs-5 me-3" aria-current="page" href="index.html" target="_blank">Nuevo ticket</a>
+                </li>
 
                 <li class="nav-item">
                     <a class="nav-link fs-5 me-3" aria-current="page" href="productosCRUD.html" target="_blank">Productos</a>
@@ -94,8 +98,9 @@
 
                     <!-- Inicio info bar -->
                     <div id="info-bar" class="container-fluid d-flex flex-row-reverse gap-5 p-3 border border-1">
-                        <h1 id="total" class="display-3 p-3">Total: 0.00</h1>
+                        <h1 id="total" class="display-4 p-2">Total: 0.00</h1>
                         <button id="submit-bill" class="btn btn-primary btn-primary-color"><i class="fa-solid fa-cart-shopping"></i> F12 - Cobrar </button>
+                        <h5 id="total-productos" class="p-2">Productos: 0</h5>
                     </div>
                     <!-- Final info bar -->
                 </div>

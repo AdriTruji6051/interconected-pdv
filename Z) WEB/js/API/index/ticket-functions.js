@@ -1,15 +1,17 @@
 function calculateTotalBill(productsToCalculate){
     var totalBill = 0;
+    var totalProd = 0;
     for(var prod_cd in productsToCalculate){
         if(productsToCalculate[prod_cd].IMPORTE > 0){
             totalBill += productsToCalculate[prod_cd].IMPORTE;
+            totalProd += Math.ceil(productsToCalculate[prod_cd].CANTIDAD)
         }else{
             selectedProductRow = `tr-${prod_cd}`;
             selectedProductRow__BDid = prod_cd;
             deleteProductFromBill();
         }
     }
-
+    document.getElementById('total-productos').innerText = `Productos: ${totalProd}`;
     totalH1.innerText = `Total: ${totalBill}`;
     return totalBill;
 };

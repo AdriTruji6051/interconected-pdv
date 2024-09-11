@@ -69,13 +69,13 @@ def calculate_total_articles(products):
 def create_ticket_struct(products, change, notes, date):
     try:
         total_local = 0
-        TICKET_TXT = str(f' Tel: 373 734 9861#-#    Cel: 33 1076 7498#-#    {date}#-#')
+        TICKET_TXT = str(f'     Independencia #108#-#     Tel: 373 734 9861#-#    Cel: 33 1076 7498#-#    {date}#-#')
 
         if type(notes) != bool: TICKET_TXT += notes + '#-##-#----------------------------------------------->#-#' 
         else: TICKET_TXT += '#-#----------------------------------------------->#-#'
 
         for key in products:
-            DESCRIPCION = products[key]['DESCRIPCION']
+            DESCRIPCION = products[key]['DESCRIPCION'][:18] if len(products[key]['DESCRIPCION']) > 18 else products[key]['DESCRIPCION']
             PVENTA = products[key]['PVENTA']
             CANTIDAD = products[key]['CANTIDAD']
             IMPORTE = products[key]['IMPORTE']
@@ -87,7 +87,7 @@ def create_ticket_struct(products, change, notes, date):
         TICKET_TXT += str(f'#-#Cambio:  {change}') if change else ' '
         TICKET_TXT += '#-##-#Gracias por su compra!...'
 
-        return TICKET_TXT
+        return TICKET_TXT.upper()
     except Exception as e:
         print(e)
 
@@ -453,7 +453,7 @@ def openHTML():
     run(['index.html'], shell=False, creationflags=CREATE_NEW_CONSOLE)
 
 def startFlaskServer():
-    app.run(debug=False,host='192.168.1.180', port=5000)
+    app.run(debug=False,host='localhost', port=5000)
 
 if __name__ == '__main__':
     printer_service = threading.Thread(target=run_printer_service)
