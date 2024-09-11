@@ -1,3 +1,7 @@
+async function sendIp() {
+    await fetch(`http://${SERVERIP}:5000/init/new`)
+}
+
 async function getProduct(codigo){
     
     var res

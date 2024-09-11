@@ -162,7 +162,7 @@ deleteForm.addEventListener('submit', function(event) {
     event.preventDefault()
 
     const codigo = {
-        codigo: inputCodigo.value
+        codigo: document.getElementById('delete-codigo').value
     };
 
     fetch(`http://${SERVERIP}:5000/delete/product`, {

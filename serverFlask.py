@@ -4,13 +4,58 @@ from flask_cors import CORS
 from datetime import datetime
 import threading
 import json
-from printer_mediator import list_printers, print_ticket, create_ticket_struct
+from printer_mediator import list_printers, print_ticket
 import sqlite3
-import requests
 import socket
 
 app = Flask(__name__)
 CORS(app, supports_credentials=True)
+
+#Obtenemos la ip local
+def get_local_ip():
+    # Crear una conexión a una dirección IP externa (no se enviará ningún dato)
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    try:
+        # Intentar conectarse a una IP pública (Google DNS en este caso)
+        s.connect(('8.8.8.8', 80))
+        local_ip = s.getsockname()[0]
+    except Exception as e:
+        local_ip = 'No se pudo obtener la IP'
+    finally:
+        s.close()
+    return local_ip
+
+#Obtenemos las impresoras en el formato
+def get_printers(ipv4):
+    client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    client_socket.connect((ipv4, 12345))
+    client_socket.sendall(b'GET PRINTERS')
+
+    data = client_socket.recv(1024)
+    client_socket.close()
+    data = json.loads(data.decode('utf-8'))
+    return data
+
+def send_ticket_to_printer(ticket_struct = '', printer = {}, open_drawer = False):
+    client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    client_socket.connect((printer['ipv4'], 12345))
+    print_info = {
+        'printerName': printer['name'],
+        'text': ticket_struct,
+        'openDrawer': open_drawer
+    }
+
+    print_info = json.dumps(print_info)
+    client_socket.sendall(print_info.encode('utf-8'))
+
+    data = client_socket.recv(1024)
+    print(f"Respuesta del servidor: {data.decode()}")
+    client_socket.close()
+
+    return data.decode('utf-8')
+
+#Variables globales 
+PRINTERS_ON_WEB = get_printers(get_local_ip())
 
 #   Herramientas para las rutas del servidor
 def calculate_total_bill(products) -> float:
@@ -33,6 +78,32 @@ def calculate_total_articles(products):
     for key in products:
         total_article += float(products[key]['CANTIDAD'])
     return total_article
+
+def create_ticket_struct(products, change, notes, date):
+    try:
+        total_local = 0
+        TICKET_TXT = str(f' Tel: 373 734 9861#-#    Cel: 33 1076 7498#-#    {date}#-#')
+
+        if type(notes) != bool: TICKET_TXT += notes + '#-##-#----------------------------------------------->#-#' 
+        else: TICKET_TXT += '#-#----------------------------------------------->#-#'
+
+        for key in products:
+            DESCRIPCION = products[key]['DESCRIPCION']
+            PVENTA = products[key]['PVENTA']
+            CANTIDAD = products[key]['CANTIDAD']
+            IMPORTE = products[key]['IMPORTE']
+            total_local += IMPORTE
+
+            TICKET_TXT += str(CANTIDAD) + ' ' + str(DESCRIPCION) + '    ' + str(IMPORTE) + '#-# '
+        
+        TICKET_TXT += str(f'----------------------------------------------->#-##-#Total: {total_local}')
+        TICKET_TXT += str(f'#-#Cambio:  {change}') if change else ' '
+        TICKET_TXT += '#-##-#Gracias por su compra!...'
+
+        return TICKET_TXT
+    except Exception as e:
+        print(e)
+
 
 #import sqlite3
 def sqlite3_query(query, params = [], commit = False) -> list:
@@ -152,7 +223,7 @@ def insertProduct():
 
         params = parse_paramas_to_array(data)
 
-        sql = 'INSERT INTO PRODUCTOS (CODIGO, DESCRIPCION, TVENTA, PCOSTO, PVENTA, DEPT, MAYOREO, IPRIORIDAD, DINVENTARIO, DINVMINIMO, DINVMAXIMO, CHECADO_EN, PORCENTAJE_GANANCIA) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)'
+        sql = 'INSERT INTO PRODUCTOS (CODIGO, DESCRIPCION, TVENTA, PCOSTO, PVENTA, MAYOREO, DEPT, IPRIORIDAD, DINVENTARIO, DINVMINIMO, DINVMAXIMO, CHECADO_EN, PORCENTAJE_GANANCIA) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)'
         sqlite3_query(query= sql, params = params, commit= True)
 
         return jsonify({'status': 201})
@@ -201,13 +272,28 @@ def deleteProduct():
     except Exception as e:
         print(e)
         return jsonify({'status': 409})
+    
+@app.route('/init/new', methods=['GET'])
+def initPc():
+    try:
+        client_ip = request.remote_addr
+        client_printers = get_printers(ipv4=client_ip)
+        print(client_printers)
+        global PRINTERS_ON_WEB
+        PRINTERS_ON_WEB.update(client_printers)
+        print(PRINTERS_ON_WEB)
+        print('Equisde')
+    except Exception as e:
+        print(e)
+    finally:
+        return jsonify({'printers': 'loaded'})
 
 #   TICKET PRINTER LOGIC
 @app.route('/get/printers', methods=['GET'])
 def getPrinters():
-    return jsonify({'printers': list_printers()})
+    return jsonify({'printers': list(PRINTERS_ON_WEB.keys())})
 
-
+#REFACTORIZAR LA SECCION DE TICKETS PARA QUE FUNCIONE CON LA VERSION DE RED
 @app.route('/print/new/ticket', methods=['POST'])
 def createTicket():
     try:
@@ -226,8 +312,8 @@ def createTicket():
         date = datetime.now()
 
         ticketStruct = create_ticket_struct(products = products,change = paidWith - totalBill, notes = notes, date=date.strftime('%Y-%m-%d %H:%M:%S'))
-
-        if willPrint : print_ticket(ticketStruct,printerName)
+        printer = PRINTERS_ON_WEB[printerName]
+        if willPrint : send_ticket_to_printer(ticket_struct=ticketStruct, printer=printer, open_drawer=True)
 
         #AQUI DEBEMOS CREAR LA ESTRUCTURA DEL TICKET Y GUARDARLO EN LA BD
         sql = 'SELECT MAX(ID), MAX(FOLIO) FROM VENTATICKETS'

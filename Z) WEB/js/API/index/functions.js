@@ -50,6 +50,9 @@ async function onLoadFunction(){
     //Focus a introducir productos
     inputSearchProduct.focus()
 
+    //Mandamos la IP para que obtengan nuestras impresoras
+    await sendIp()
+
     //Cargamos las impresoras disponibles
     var isFirst = true;
     const printers = await get_printers();
